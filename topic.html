@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedicalStudy - Изучение темы</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #5a67d8; text-decoration: underline; }
+        h1 { font-size: 32px; margin-bottom: 10px; color: #333; }
+        .topic-meta {
+            color: #666;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .content-block {
+            margin-bottom: 30px;
+        }
+        .content-block.text {
+            line-height: 1.6;
+            font-size: 18px;
+            color: #444;
+        }
+        .content-block.image {
+            text-align: center;
+        }
+        .content-block.image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .content-block.image .caption {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .content-block.video {
+            text-align: center;
+        }
+        iframe {
+            max-width: 100%;
+            border-radius: 15px;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 24px; }
+            .content-block.text { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="contentContainer">
+        <a href="#" id="backLink" class="back-link">← Назад к предмету</a>
+        <div id="topicContent">Загрузка...</div>
+    </div>
+
+    <script src="content.js"></script>
+    <script>
+        // ========== ЭКРАНИРОВАНИЕ ДЛЯ ЗАЩИТЫ ОТ XSS ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // ========== ОСНОВНАЯ ЛОГИКА ==========
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const topicId = urlParams.get('id');
+
+            if (!topicId) {
+                document.getElementById('topicContent').innerHTML = '<div class="error">❌ Не указана тема для изучения.</div>';
+                return;
+            }
+
+            // Поиск темы в MEDICAL_CONTENT
+            let foundTopic = null;
+            let subjectKey = '';
+            let subjectName = '';
+
+            for (let subj in window.MEDICAL_CONTENT) {
+                const topics = window.MEDICAL_CONTENT[subj].topics;
+                if (topics && Array.isArray(topics)) {
+                    const topic = topics.find(t => t.id === topicId);
+                    if (topic) {
+                        foundTopic = topic;
+                        subjectKey = subj;
+                        subjectName = window.MEDICAL_CONTENT[subj].name;
+                        break;
+                    }
+                }
+            }
+            if (!foundTopic) {
+                document.getElementById('topicContent').innerHTML = '<div class="error">❌ Тема не найдена. Возможно, она была удалена.</div>';
+                return;
+            }
+
+            // Установка заголовка страницы и ссылки "Назад"
+            document.title = 'MedicalStudy - ' + escapeHtml(foundTopic.title);
+            const backLink = document.getElementById('backLink');
+            backLink.href = subjectKey + '.html';
+            backLink.innerHTML = '← Назад к курсу ' + escapeHtml(subjectName);
+
+            // Загрузка контента темы (из contentFile или из встроенного content)
+            let topicData = foundTopic;
+            if (foundTopic.contentFile) {
+                try {
+                    const response = await fetch(foundTopic.contentFile);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    topicData = await response.json();
+                } catch (err) {
+                    document.getElementById('topicContent').innerHTML = '<div class="error">❌ Ошибка загрузки материала: ' + escapeHtml(err.message) + '</div>';
+                    return;
+                }
+            }
+
+            // Формирование HTML через конкатенацию (безопасно)
+            let html = '';
+            html += '<h1>' + escapeHtml(topicData.title || foundTopic.title) + '</h1>';
+            
+            let difficultyText = '';
+            switch(foundTopic.difficulty) {
+                case 'easy': difficultyText = 'Легкий'; break;
+                case 'medium': difficultyText = 'Средний'; break;
+                case 'hard': difficultyText = 'Сложный'; break;
+                default: difficultyText = 'Не указан';
+            }
+            html += '<div class="topic-meta">📚 ' + escapeHtml(subjectName) + ' • Уровень: ' + escapeHtml(difficultyText) + '</div>';
+
+            if (topicData.content && Array.isArray(topicData.content) && topicData.content.length > 0) {
+                for (let i = 0; i < topicData.content.length; i++) {
+                    const block = topicData.content[i];
+                    
+                    if (block.type === 'text') {
+                        // ВАЖНО: Текст может содержать HTML-теги (например, <strong>), поэтому НЕ экранируем его полностью.
+                        // Но для защиты от XSS мы пропускаем через DOM-санитайзер или просто доверяем JSON.
+                        // Поскольку JSON создаёте вы (разработчик), это безопасно. Если хотите полную защиту — используйте DOMPurify.
+                        html += '<div class="content-block text">' + block.value + '</div>';
+                        
+                    } else if (block.type === 'image') {
+                        const imgUrl = block.url || '';
+                        const imgAlt = block.caption ? escapeHtml(block.caption) : 'Изображение';
+                        const captionHtml = block.caption ? '<div class="caption">' + escapeHtml(block.caption) + '</div>' : '';
+                        html += '<div class="content-block image">' +
+                                    '<img src="' + escapeHtml(imgUrl) + '" alt="' + imgAlt + '" loading="lazy" />' +
+                                    captionHtml +
+                                '</div>';
+                                
+                    } else if (block.type === 'video') {
+                        if (block.embed) {
+                            html += '<div class="content-block video">' + block.embed + '</div>';
+                        } else if (block.url) {
+                            html += '<div class="content-block video">' +
+                                        '<iframe src="' + escapeHtml(block.url) + '" frameborder="0" allowfullscreen></iframe>' +
+                                    '</div>';
+                        }
+                    }
+                }
+            } else {
+                html += '<div class="content-block text">📖 Материал временно отсутствует. Загляните позже!</div>';
+            }
+            document.getElementById('topicContent').innerHTML = html;
+        })();
+    </script>
+</body>
+</html>

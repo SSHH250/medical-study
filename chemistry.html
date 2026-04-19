@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MedicalStudy - Химия</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        
+        .navbar { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 24px; color: #667eea; font-weight: bold; cursor: pointer; }
+        .logout-btn { padding: 8px 16px; background: #e53e3e; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .back-btn { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
+        .section { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; }
+        .section h2 { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .item { padding: 15px; background: #f7f7f7; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .btn-start { padding: 8px 16px; background: #48bb78; color: white; border: none; border-radius: 8px; cursor: pointer; min-height: 44px; }
+        .completed-badge { background: #48bb78; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        .points-badge { background: #667eea; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        
+        .test-wrapper { max-width: 1000px; margin: 0 auto; }
+        .nav-panel { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .nav-title { font-size: 14px; color: #666; margin-bottom: 15px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .nav-stats { display: flex; gap: 15px; }
+        .stat { font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+        .stat.answered { background: #667eea; color: white; }
+        .stat.skipped { background: #fff3cd; color: #856404; border: 1px solid #f59e0b; }
+        .nav-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; justify-content: center; }
+        .nav-btn { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; font-weight: bold; border: 2px solid transparent; background: #e2e3e5; color: #666; transition: all 0.2s; }
+        .nav-btn:hover { transform: scale(1.05); }
+        .nav-btn.answered { background: #667eea; color: white; border-color: #667eea; }
+        .nav-btn.skipped { background: #e2e3e5; color: #666; border: 2px solid #f59e0b; }
+        .nav-btn.unseen { background: #e2e3e5; color: #666; }
+        .nav-btn.current { border-color: #333; transform: scale(1.1); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        
+        .question-card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; }
+        .question-text { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .question-topic { background: #e0e7ff; padding: 5px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 13px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .option { padding: 12px 16px; background: #f7f7f7; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #e8e8e8; transform: translateX(5px); }
+        .option.selected { background: #667eea; color: white; }
+        .text-input { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; margin-top: 10px; }
+        .text-input:focus { outline: none; border-color: #667eea; }
+        
+        .test-actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; margin-bottom: 20px; flex-wrap: wrap; }
+        .test-actions button { padding: 14px 28px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s; min-height: 50px; min-width: 140px; }
+        .test-actions button:hover { transform: translateY(-2px); }
+        .prev-btn { background: #ccc; }
+        .next-btn { background: #48bb78; color: white; }
+        .submit-btn { background: #667eea; color: white; }
+        .clear-btn { background: #f59e0b; color: white; }
+        .exit-btn { background: #e53e3e; color: white; }
+        
+        .info-box { background: #e0f2fe; padding: 12px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
+        .result-card { text-align: center; padding: 40px; }
+        .score { font-size: 48px; font-weight: bold; color: #667eea; margin: 20px 0; }
+        
+        .first-time-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s ease;
+        }
+        .first-time-card { background: white; border-radius: 30px; padding: 40px; max-width: 500px; text-align: center; animation: slideUp 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .first-time-icon { font-size: 70px; margin-bottom: 20px; animation: pulse 1s ease infinite; }
+        .first-time-title { font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 20px; }
+        .first-time-warning { background: #fef3c7; padding: 15px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #f59e0b; text-align: left; }
+        .first-time-button { padding: 14px 28px; background: #48bb78; color: white; border: none; border-radius: 15px; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        .first-time-button:hover { transform: scale(1.05); background: #38a169; }
+        
+        .confirm-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
+        .confirm-content { background: white; border-radius: 20px; padding: 30px; max-width: 400px; text-align: center; }
+        .confirm-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+        .confirm-buttons button { padding: 12px 28px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; min-width: 130px; }
+        .confirm-cancel { background: #e2e3e5; color: #333; }
+        .confirm-ok { background: #e53e3e; color: white; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
+        .modal-content { background: white; margin: 3% auto; padding: 30px; width: 95%; max-width: 1000px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+        
+        .leaderboard-row { display: grid; grid-template-columns: 60px 1fr 100px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+        .leaderboard-header { background: #f7f7f7; font-weight: bold; border-radius: 10px; margin-bottom: 5px; }
+        .current-user-row { background: #e0f2fe; font-weight: bold; }
+        
+        @media (max-width: 768px) {
+            .modal-content { width: 95%; margin: 10% auto; padding: 15px; }
+            .test-actions { flex-direction: column; gap: 12px; }
+            .test-actions button { width: 100%; padding: 14px 20px; min-width: auto; }
+            .nav-btn { width: 38px; height: 38px; font-size: 14px; }
+            .question-card { padding: 20px; }
+            .question-text { font-size: 18px; }
+            .first-time-card { margin: 20px; padding: 25px; }
+            .first-time-title { font-size: 22px; }
+            .leaderboard-row { grid-template-columns: 45px 1fr 70px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo" onclick="location.href='main.html'">🏥 MedicalStudy</div>
+        <div><span id="userNameDisplay"></span> <button class="logout-btn" id="logoutBtn">Выйти</button></div>
+    </div>
+
+    <div class="container">
+        <button class="back-btn" onclick="location.href='main.html'">← Назад</button>
+        <div class="section"><h2>🧪 Химия - ваши очки: <span id="subjectPoints">0</span></h2></div>
+        <div class="section"><h2>📚 Темы для изучения</h2><div id="topicsList"></div></div>
+        <div class="section"><h2>📝 Тесты</h2><div id="testsList"></div></div>
+        <div class="section"><h2>🏆 Таблица лидеров по химии</h2><div id="leaderboard"></div></div>
+    </div>
+
+    <div id="testModal" class="modal"><div class="modal-content"><div id="testContent"></div></div></div>
+    <div id="confirmModal" class="confirm-modal"><div class="confirm-content"><h3>⚠️ Внимание!</h3><p id="confirmMessage"></p><p style="margin-top:10px;">Вы уверены, что хотите завершить тест?</p><div class="confirm-buttons"><button class="confirm-cancel" id="confirmCancel">◀ Вернуться</button><button class="confirm-ok" id="confirmOk">✅ Завершить</button></div></div></div>
+    <div id="exitConfirmModal" class="confirm-modal"><div class="confirm-content"><h3>⚠️ Выйти из теста?</h3><p>Прогресс не сохранится.</p><div class="confirm-buttons"><button class="confirm-cancel" id="exitConfirmCancel">◀ Вернуться</button><button class="confirm-ok" id="exitConfirmOk">✅ Выйти</button></div></div></div>
+    <div id="firstTimeOverlay" class="first-time-overlay" style="display: none;">
+        <div class="first-time-card">
+            <div class="first-time-icon">🎓</div>
+            <div class="first-time-title">Впервые проходите тест?</div>
+            <div class="first-time-warning">💰 <strong>Начисление баллов</strong><br>При первом прохождении вы получите баллы. Баллы начисляются только один раз!</div>
+            <div class="first-time-warning">🎲 <strong>Случайные вопросы</strong><br>Каждый раз вопросы выбираются случайно, а варианты ответов перемешиваются!</div>
+            <div class="first-time-warning">🚫 <strong>Нельзя выйти</strong><br>Во время первого прохождения вы не сможете выйти из теста.</div>
+            <div class="first-time-warning">🔄 <strong>Повторное прохождение</strong><br>После получения баллов вы сможете перепроходить тест сколько угодно раз для закрепления, но баллы уже не начисляются.</div>
+            <button class="first-time-button" id="firstTimeConfirmBtn">✅ Понятно, начинаю тест!</button>
+        </div>
+    </div>
+
+    <script src="content.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        
+        // ========== ВСТАВЬТЕ ВАШУ КОНФИГУРАЦИЮ FIREBASE ==========
+       const firebaseConfig = {
+
+  apiKey: "AIzaSyBy7S7ebaj3JXCLI00GgU4kmnZxMu9BVds",
+
+  authDomain: "medical-study-801ff.firebaseapp.com",
+
+  projectId: "medical-study-801ff",
+
+  storageBucket: "medical-study-801ff.firebasestorage.app",
+
+  messagingSenderId: "957200826650",
+
+  appId: "1:957200826650:web:b9c830bee6fe1a584feca3"
+
+};
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        
+        // Проверка авторизации
+        const savedUser = localStorage.getItem('currentUser');
+        if (!savedUser) {
+            location.href = 'index.html';
+        } else {
+            const currentUser = JSON.parse(savedUser);
+            const subject = 'chemistry';
+            
+            let subjectData = null;
+            if (window.MEDICAL_CONTENT && window.MEDICAL_CONTENT.chemistry) {
+                subjectData = window.MEDICAL_CONTENT.chemistry;
+            } else {
+                document.getElementById('testsList').innerHTML = '<div class="item" style="color:red;">Ошибка: content.js не загружен</div>';
+            }
+            
+            // Хранилище пройденных тестов
+            let completedTests = {};
+            const completedKey = 'completed_tests_' + currentUser.id;
+            const savedCompleted = localStorage.getItem(completedKey);
+            if (savedCompleted) completedTests = JSON.parse(savedCompleted);
+            
+            function hasPoints(testId) { return completedTests[testId] === true; }
+            function markPoints(testId) { completedTests[testId] = true; localStorage.setItem(completedKey, JSON.stringify(completedTests)); }
+            
+            // Загрузка данных пользователя из Firebase
+            async function loadUserData() {
+                try {
+                    const userRef = doc(db, 'users', currentUser.id);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
+                        document.getElementById('subjectPoints').innerHTML = userData.subjectPoints?.chemistry || 0;
+                        return userData;
+                    }
+                } catch (err) { console.error(err); }
+                return null;
+            }
+            loadUserData();
+            
+            // Обновление баллов в Firebase
+            async function updateUserPoints(subject, earnedPoints, testCompleted = false) {
+                try {
+                    const userRef = doc(db, 'users', currentUser.id);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        const subjectPoints = userData.subjectPoints || { chemistry: 0, anatomy: 0, biology: 0, histology: 0 };
+                        subjectPoints[subject] = (subjectPoints[subject] || 0) + earnedPoints;
+                        const newTotalPoints = (userData.totalPoints || 0) + earnedPoints;
+                        const newCompletedTests = (userData.completedTests || 0) + (testCompleted ? 1 : 0);
+                        await updateDoc(userRef, { subjectPoints, totalPoints: newTotalPoints, completedTests: newCompletedTests });
+                        return true;
+                    }
+                } catch (err) { console.error('Firebase update error:', err); }
+                return false;
+            }
+            
+            // Таблица лидеров из Firebase
+            async function loadLeaderboard() {
+                try {
+                    const usersRef = collection(db, 'users');
+                    const querySnapshot = await getDocs(usersRef);
+                    let ratings = [];
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const points = data.subjectPoints?.chemistry || 0;
+                        ratings.push({ userId: data.id, username: data.username, points: points });
+                    });
+                    ratings.sort((a, b) => b.points - a.points);
+                    let html = '<div class="leaderboard-row leaderboard-header"><div>#</div><div>Игрок</div><div>Очки</div></div>';
+                    if (ratings.length === 0) { html += '<div class="leaderboard-row">🏆 Пока нет участников</div>'; }
+                    else {
+                        for (let i = 0; i < ratings.length; i++) {
+                            const r = ratings[i];
+                            const isCurrentUser = (r.userId === currentUser.id);
+                            const rowClass = isCurrentUser ? 'current-user-row' : '';
+                            html += '<div class="leaderboard-row ' + rowClass + '"><div>' + (i+1) + '</div><div>' + escapeHtml(r.username) + (isCurrentUser ? ' (вы)' : '') + '</div><div>⭐ ' + r.points + '</div></div>';
+                        }
+                    }
+                    document.getElementById('leaderboard').innerHTML = html;
+                } catch (err) { console.error(err); document.getElementById('leaderboard').innerHTML = '<div class="leaderboard-row">Ошибка загрузки</div>'; }
+            }
+            loadLeaderboard();
+            
+            // Темы
+            if (subjectData && subjectData.topics) {
+                let topicsHtml = '';
+                for (let t of subjectData.topics) {
+                    if (t.isAvailable) {
+                        topicsHtml += '<div class="item"><span>📖 <a href="topic.html?id=' + encodeURIComponent(t.id) + '" style="text-decoration:none; color:#333; font-weight:bold;">' + escapeHtml(t.title) + '</a></span><span style="color:green;">✅ Доступно</span></div>';
+                    }
+                }
+                document.getElementById('topicsList').innerHTML = topicsHtml || '<div class="item">Нет тем</div>';
+            }
+            
+            // ========== ЛОГИКА ТЕСТА ==========
+            let currentTest = null, currentQuestions = [], userAnswers = [], questionStatus = [], currentQIndex = 0, shouldAwardPoints = true;
+            let pendingTestId = null, pendingAward = null;
+            
+            function shuffleArray(arr) { const a = [...arr]; for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+            function shuffleQuestionOptions(q) {
+                if (q.type !== 'choice' && q.type !== 'image-choice') return q;
+                const optsWithIdx = q.options.map((opt, idx) => ({ text: opt, orig: idx }));
+                const shuffled = shuffleArray(optsWithIdx);
+                const newQ = JSON.parse(JSON.stringify(q));
+                newQ.options = shuffled.map(item => item.text);
+                newQ.correct = shuffled.findIndex(item => item.orig === q.correct);
+                return newQ;
+            }
+            function generateQuestions(test) {
+                const banks = test.questionBanks;
+                const count = test.numberOfQuestions || banks.length;
+                const shuffledBanks = shuffleArray(banks);
+                const selected = shuffledBanks.slice(0, count);
+                const result = [];
+                for (let b of selected) {
+                    const rand = Math.floor(Math.random() * b.questions.length);
+                    let q = JSON.parse(JSON.stringify(b.questions[rand]));
+                    q.topic = b.topic;
+                    q = shuffleQuestionOptions(q);
+                    result.push(q);
+                }
+                return result;
+            }
+            function isAnswerCorrect(q, ans) {
+                if (q.type === 'text-input') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
+                return ans === q.correct;
+            }
+            
+            function updateNavPanel() {
+                const navDiv = document.getElementById('questionsNav');
+                if (!navDiv) return;
+                let answered = 0, skipped = 0;
+                for (let s of questionStatus) {
+                    if (s === 'answered') answered++;
+                    else if (s === 'skipped') skipped++;
+                }
+                document.getElementById('statAnswered').innerHTML = answered;
+                document.getElementById('statSkipped').innerHTML = skipped;
+                let html = '';
+                for (let i = 0; i < currentQuestions.length; i++) {
+                    let cls = '';
+                    if (questionStatus[i] === 'answered') cls = 'answered';
+                    else if (questionStatus[i] === 'skipped') cls = 'skipped';
+                    else cls = 'unseen';
+                    if (i === currentQIndex) cls += ' current';
+                    html += '<div class="nav-btn ' + cls + '" onclick="goToQuestion(' + i + ')">' + (i+1) + '</div>';
+                }
+                navDiv.innerHTML = html;
+            }
+            
+            function renderCurrentQuestion() {
+                const container = document.getElementById('currentQuestionContainer');
+                if (!container) return;
+                const q = currentQuestions[currentQIndex];
+                let html = '';
+                if (q.topic) html += '<div class="question-topic">📌 Тема: ' + escapeHtml(q.topic) + '</div>';
+                if (questionStatus[currentQIndex] === 'skipped') html += '<div style="background:#fef3c7; padding:10px; border-radius:10px; margin-bottom:15px;">⏭️ Этот вопрос был пропущен. Вы можете ответить на него сейчас.</div>';
+                html += '<div class="question-text">' + escapeHtml(q.text) + '</div>';
+                
+                if (q.type === 'text-input') {
+                    let val = userAnswers[currentQIndex] || '';
+                    val = val.replace(/"/g, '&quot;');
+                    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
+                    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
+                } else {
+                    html += '<div class="options-list">';
+                    for (let i = 0; i < q.options.length; i++) {
+                        const selected = (userAnswers[currentQIndex] === i);
+                        html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
+                    }
+                    html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
+                }
+                container.innerHTML = '<div class="question-card">' + html + '</div>';
+                if (q.type === 'text-input') {
+                    const inp = document.getElementById('textAnswer');
+                    if (inp) {
+                        inp.oninput = function(e) {
+                            userAnswers[currentQIndex] = e.target.value;
+                            if (e.target.value.trim() !== '') questionStatus[currentQIndex] = 'temp_answered';
+                            else if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'skipped';
+                            updateNavPanel();
+                        };
+                    }
+                }
+            }
+            
+            function renderTestInterface() {
+                let answered = 0, skipped = 0;
+                for (let s of questionStatus) {
+                    if (s === 'answered') answered++;
+                    else if (s === 'skipped') skipped++;
+                }
+                let pointsMsg = shouldAwardPoints ? '<div class="info-box">💰 За этот тест можно получить баллы! Вопросы и варианты ответов случайные.</div>' : '<div class="info-box">📖 Обучающий режим. Баллы не начисляются.</div>';
+                let html = '<div class="test-wrapper">' + pointsMsg +
+                    '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped + '</span></span></div></div>' +
+                    '<div class="nav-buttons" id="questionsNav"></div></div>' +
+                    '<div id="currentQuestionContainer"></div><div class="test-actions">';
+                if (currentQIndex > 0) html += '<button class="prev-btn" onclick="prevQuestion()">← Предыдущий</button>';
+                if (currentQIndex < currentQuestions.length - 1) html += '<button class="next-btn" onclick="nextQuestion()">Следующий →</button>';
+                if (currentQIndex === currentQuestions.length - 1) html += '<button class="submit-btn" onclick="submitLastQuestion()">✅ Завершить тест</button>';
+                if (!shouldAwardPoints) html += '<button class="exit-btn" onclick="showExitConfirm()">🚪 Выйти</button>';
+                html += '</div></div>';
+                document.getElementById('testContent').innerHTML = html;
+                renderCurrentQuestion();
+                updateNavPanel();
+            }
+            
+            function submitLastQuestion() {
+                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
+                else if (questionStatus[currentQIndex] !== 'answered') questionStatus[currentQIndex] = 'skipped';
+                showConfirmModal();
+            }
+            
+            function clearAnswer() {
+                userAnswers[currentQIndex] = null;
+                questionStatus[currentQIndex] = (questionStatus[currentQIndex] === 'answered') ? 'temp_skipped' : 'skipped';
+                renderCurrentQuestion();
+                updateNavPanel();
+            }
+            
+            function showConfirmModal() {
+                let unanswered = [];
+                for (let i = 0; i < questionStatus.length; i++) if (questionStatus[i] !== 'answered') unanswered.push(i+1);
+                const modal = document.getElementById('confirmModal');
+                document.getElementById('confirmMessage').innerHTML = unanswered.length ? 'У вас есть вопросы без ответа: №' + unanswered.join(', ') : 'Все вопросы отвечены!';
+                modal.style.display = 'flex';
+            }
+            
+            function showExitConfirm() { document.getElementById('exitConfirmModal').style.display = 'flex'; }
+            function hideConfirmModal() { document.getElementById('confirmModal').style.display = 'none'; }
+            function hideExitConfirmModal() { document.getElementById('exitConfirmModal').style.display = 'none'; }
+            
+            function finishSubmit() {
+                let correct = 0, answered = 0;
+                for (let i = 0; i < currentQuestions.length; i++) {
+                    if (questionStatus[i] === 'answered' && userAnswers[i] !== null) {
+                        answered++;
+                        if (isAnswerCorrect(currentQuestions[i], userAnswers[i])) correct++;
+                        }
+                }
+                const percent = answered ? correct / currentQuestions.length : 0;
+                const earned = shouldAwardPoints ? Math.floor(currentTest.points * percent) : 0;
+                let details = '';
+                for (let i = 0; i < currentQuestions.length; i++) {
+                    const q = currentQuestions[i];
+                    const status = questionStatus[i];
+                    let isCor = false, userTxt = '';
+                    if (status === 'answered' && userAnswers[i] !== null) {
+                        isCor = isAnswerCorrect(q, userAnswers[i]);
+                        userTxt = q.type === 'text-input' ? userAnswers[i] : q.options[userAnswers[i]];
+                    } else if (status === 'skipped') userTxt = '⏭️ Пропущен';
+                    else userTxt = '❌ Не просмотрен';
+                    const corTxt = q.type === 'text-input' ? q.correct : q.options[q.correct];
+                    const bg = status === 'answered' ? (isCor ? '#d4edda' : '#f8d7da') : (status === 'skipped' ? '#fef3c7' : '#e2e3e5');
+                    const icon = status === 'answered' ? (isCor ? '✓' : '✗') : (status === 'skipped' ? '⏭️' : '❌');
+                    const text = status === 'answered' ? (isCor ? 'Правильно' : 'Неправильно') : (status === 'skipped' ? 'Пропущен' : 'Не просмотрен');
+                    details += '<div style="padding:10px; margin:5px 0; background:' + bg + '; border-radius:8px;"><div><strong>' + (i+1) + '.</strong> ' + escapeHtml(q.text.substring(0,60)) + '</div>' +
+                        '<div>Ваш ответ: ' + escapeHtml(userTxt) + '</div><div>Правильный: ' + escapeHtml(corTxt) + '</div><div>' + icon + ' ' + text + '</div></div>';
+                }
+                let skipped = 0, unseen = 0;
+                for (let s of questionStatus) { if (s === 'skipped') skipped++; else if (s === 'unseen') unseen++; }
+                let resultHtml = '<div class="result-card"><h2>📊 Результат</h2><div class="score">' + correct + ' / ' + currentQuestions.length + '</div>' +
+                    '<div>Правильно: ' + correct + '</div><div>Отвечено: ' + answered + '</div><div>Пропущено: ' + skipped + '</div><div>Не просмотрено: ' + unseen + '</div>' +
+                    '<div>Процент: ' + Math.round(percent*100) + '%</div>';
+                if (shouldAwardPoints) resultHtml += '<div style="font-size:24px; margin:20px 0;">🏆 Вы заработали: ' + earned + ' из ' + currentTest.points + ' очков</div>';
+                resultHtml += '<details><summary>📋 Подробно</summary>' + details + '</details>';
+                if (shouldAwardPoints) resultHtml += '<button onclick="saveResults(' + earned + ')" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Сохранить результаты</button>';
+                else resultHtml += '<button onclick="closeResults()" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Вернуться к курсу</button>';
+                resultHtml += '</div>';
+                document.getElementById('testContent').innerHTML = resultHtml;
+                hideConfirmModal();
+            }
+            
+            function closeResults() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
+            
+            async function saveResults(earned) {
+                if (shouldAwardPoints && !hasPoints(currentTest.id)) {
+                    markPoints(currentTest.id);
+                    await updateUserPoints(subject, earned, true);
+                    alert('✅ Получено ' + earned + ' очков!');
+                } else if (!shouldAwardPoints) {
+                    alert('📖 Спасибо за прохождение!');
+                } else {
+                    alert('ℹ️ Вы уже получали баллы за этот тест ранее.');
+                    }
+                document.getElementById('testModal').style.display = 'none';
+                location.reload();
+            }
+            
+            function goToQuestion(idx) {
+                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
+                else if (questionStatus[currentQIndex] === 'temp_skipped') questionStatus[currentQIndex] = 'skipped';
+                currentQIndex = idx;
+                renderCurrentQuestion();
+                updateNavPanel();
+                renderTestInterface();
+            }
+            
+            function selectAnswer(idx) {
+                userAnswers[currentQIndex] = idx;
+                questionStatus[currentQIndex] = 'temp_answered';
+                renderCurrentQuestion();
+                updateNavPanel();
+            }
+            
+            function nextQuestion() {
+                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
+                else if (questionStatus[currentQIndex] !== 'answered') questionStatus[currentQIndex] = 'skipped';
+                if (currentQIndex < currentQuestions.length - 1) {
+                    currentQIndex++;
+                    if (questionStatus[currentQIndex] === 'unseen') questionStatus[currentQIndex] = 'unseen';
+                    renderCurrentQuestion();
+                    updateNavPanel();
+                    renderTestInterface();
+                }
+            }
+            
+            function prevQuestion() {
+                if (currentQIndex > 0) {
+                    currentQIndex--;
+                    renderCurrentQuestion();
+                    updateNavPanel();
+                    renderTestInterface();
+                }
+            }
+            
+            function exitTest() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
+            
+            function startTestWithConfirm(testId, award) {
+                pendingTestId = testId;
+                pendingAward = award;
+                document.getElementById('firstTimeOverlay').style.display = 'flex';
+            }
+            
+            function startTest(testId, award) {
+                currentTest = subjectData.tests.find(t => t.id === testId);
+                if (!currentTest) { alert('Тест не найден'); return; }
+                shouldAwardPoints = award;
+                currentQuestions = generateQuestions(currentTest);
+                userAnswers = new Array(currentQuestions.length).fill(null);
+                questionStatus = new Array(currentQuestions.length).fill('unseen');
+                currentQIndex = 0;
+                renderTestInterface();
+                document.getElementById('testModal').style.display = 'block';
+            }
+            
+            // Делаем функции глобальными для вызова из HTML
+            window.goToQuestion = goToQuestion;
+            window.selectAnswer = selectAnswer;
+            window.nextQuestion = nextQuestion;
+            window.prevQuestion = prevQuestion;
+            window.clearAnswer = clearAnswer;
+            window.submitLastQuestion = submitLastQuestion;
+            window.showExitConfirm = showExitConfirm;
+            window.exitTest = exitTest;
+            window.startTestWithConfirm = startTestWithConfirm;
+            window.startTest = startTest;
+            window.saveResults = saveResults;
+            window.closeResults = closeResults;
+            window.showConfirmModal = showConfirmModal;
+            window.finishSubmit = finishSubmit;
+            
+            // Тесты из content.js
+            if (subjectData && subjectData.tests) {
+                let testsHtml = '';
+                for (let test of subjectData.tests) {
+                    const hp = hasPoints(test.id);
+                    if (!hp) {
+                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
+                    } else {
+                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
+                    }
+                }
+                document.getElementById('testsList').innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
+            }
+            
+            document.getElementById('firstTimeConfirmBtn').onclick = function() {
+                document.getElementById('firstTimeOverlay').style.display = 'none';
+                startTest(pendingTestId, pendingAward);
+            };
+            document.getElementById('confirmCancel').onclick = hideConfirmModal;
+            document.getElementById('confirmOk').onclick = finishSubmit;
+            document.getElementById('exitConfirmCancel').onclick = hideExitConfirmModal;
+            document.getElementById('exitConfirmOk').onclick = exitTest;
+            document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem('currentUser'); location.href = 'index.html'; };
+        }
+    </script>
+</body>
+</html>

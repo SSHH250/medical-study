@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MedicalStudy - Регистрация и вход</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .auth-card h1 { text-align: center; color: #667eea; margin-bottom: 10px; }
+        .auth-card h2 { text-align: center; color: #333; margin-bottom: 30px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; }
+        .tab { flex: 1; padding: 12px; border: none; background: #f0f0f0; cursor: pointer; border-radius: 10px; font-size: 16px; }
+        .tab.active { background: #667eea; color: white; }
+        .form { display: flex; flex-direction: column; gap: 15px; }
+        .form.hidden { display: none; }
+        .form input { padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; }
+        .form button { padding: 12px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+        .form button:hover { background: #5a67d8; }
+        .form button:disabled { background: #ccc; cursor: not-allowed; }
+        .message { text-align: center; font-size: 14px; margin-top: 10px; }
+        .error { color: red; }
+        .success { color: green; }
+        .warning { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; text-align: center; }
+        .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 500px) { .auth-card { padding: 25px; } .tab { font-size: 14px; } }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h1>🏥 MedicalStudy</h1>
+        <h2>Добро пожаловать!</h2>
+        <div class="warning">⚠️ Учебный проект. Данные хранятся в облаке Firebase.</div>
+        <div class="tabs">
+            <button class="tab active" id="loginTab">Вход</button>
+            <button class="tab" id="registerTab">Регистрация</button>
+        </div>
+        <div id="loginForm" class="form">
+            <input type="text" id="loginUsername" placeholder="Имя пользователя">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <button id="doLogin">Войти</button>
+            <div id="loginMessage" class="message"></div>
+        </div>
+        <div id="registerForm" class="form hidden">
+            <input type="text" id="regUsername" placeholder="Имя пользователя">
+            <input type="password" id="regPassword" placeholder="Пароль">
+            <input type="password" id="regConfirmPassword" placeholder="Подтвердите пароль">
+            <button id="doRegister">Зарегистрироваться</button>
+            <div id="registerMessage" class="message"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        // ========== ВСТАВЬТЕ ВАШУ КОНФИГУРАЦИЮ FIREBASE ==========
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyBy7S7ebaj3JXCLI00GgU4kmnZxMu9BVds",
+
+  authDomain: "medical-study-801ff.firebaseapp.com",
+
+  projectId: "medical-study-801ff",
+
+  storageBucket: "medical-study-801ff.firebasestorage.app",
+
+  messagingSenderId: "957200826650",
+
+  appId: "1:957200826650:web:b9c830bee6fe1a584feca3"
+
+};
+
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        
+        // Переключение вкладок
+        document.getElementById('loginTab').onclick = () => {
+            document.getElementById('loginTab').classList.add('active');
+            document.getElementById('registerTab').classList.remove('active');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginMessage').innerHTML = '';
+            document.getElementById('registerMessage').innerHTML = '';
+        };
+        
+        document.getElementById('registerTab').onclick = () => {
+            document.getElementById('registerTab').classList.add('active');
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('loginMessage').innerHTML = '';
+            document.getElementById('registerMessage').innerHTML = '';
+        };
+        
+        // РЕГИСТРАЦИЯ
+        document.getElementById('doRegister').onclick = async () => {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+            const msgDiv = document.getElementById('registerMessage');
+            const btn = document.getElementById('doRegister');
+            
+            if (!username || !password) { msgDiv.innerHTML = '<span class="error">Заполните все поля</span>'; return; }
+            if (password !== confirm) { msgDiv.innerHTML = '<span class="error">Пароли не совпадают</span>'; return; }
+            if (password.length < 4) { msgDiv.innerHTML = '<span class="error">Пароль минимум 4 символа</span>'; return; }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Регистрация...';
+            
+            try {
+                const userRef = doc(db, 'users', username);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    msgDiv.innerHTML = '<span class="error">Пользователь уже существует</span>';
+                    btn.disabled = false;
+                    btn.innerHTML = 'Зарегистрироваться';
+                    return;
+                }
+                
+                const newUser = {
+                    id: username,
+                    username: username,
+                    password: password,
+                    totalPoints: 0,
+                    completedTests: 0,
+                    subjectPoints: { chemistry: 0, anatomy: 0, biology: 0, histology: 0 },
+                    createdAt: new Date().toISOString()
+                };
+                
+                await setDoc(userRef, newUser);
+                
+                msgDiv.innerHTML = '<span class="success">✅ Регистрация успешна! Теперь войдите.</span>';
+                // Очищаем поля
+                document.getElementById('regUsername').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regConfirmPassword').value = '';
+                
+                setTimeout(() => { document.getElementById('loginTab').click(); }, 1500);
+            } catch (err) {
+                console.error(err);
+                msgDiv.innerHTML = '<span class="error">Ошибка сервера. Проверьте интернет и конфигурацию Firebase.</span>';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Зарегистрироваться';
+            }
+        };
+        
+        // ВХОД
+        document.getElementById('doLogin').onclick = async () => {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const msgDiv = document.getElementById('loginMessage');
+            const btn = document.getElementById('doLogin');
+            
+            if (!username || !password) { msgDiv.innerHTML = '<span class="error">Введите логин и пароль</span>'; return; }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Вход...';
+            
+            try {
+                const userRef = doc(db, 'users', username);
+                const userSnap = await getDoc(userRef);
+                
+                if (!userSnap.exists()) {
+                    msgDiv.innerHTML = '<span class="error">Пользователь не найден</span>';
+                    btn.disabled = false;
+                    btn.innerHTML = 'Войти';
+                    return;
+                }
+                
+                const userData = userSnap.data();
+                if (userData.password !== password) {
+                    msgDiv.innerHTML = '<span class="error">Неверный пароль</span>';
+                    btn.disabled = false;
+                    btn.innerHTML = 'Войти';
+                    return;
+                }
+                
+                localStorage.setItem('currentUser', JSON.stringify({ id: userData.id, username: userData.username }));
+                window.location.href = 'main.html';
+            } catch (err) {
+                console.error(err);
+                msgDiv.innerHTML = '<span class="error">Ошибка сервера. Проверьте интернет.</span>';
+                btn.disabled = false;
+                btn.innerHTML = 'Войти';
+            }
+        };
+    </script>
+</body>
+</html>

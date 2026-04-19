@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MedicalStudy - Главная</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .navbar { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 24px; color: #667eea; font-weight: bold; cursor: pointer; }
+        .logout-btn { padding: 8px 16px; background: #e53e3e; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .profile-card { background: white; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 40px; }
+        .profile-avatar { font-size: 60px; margin-bottom: 10px; }
+        .profile-card h3 { font-size: 24px; color: #333; margin-bottom: 5px; }
+        .stats { display: flex; justify-content: center; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+        .stat { text-align: center; background: #f7f7f7; padding: 10px 20px; border-radius: 15px; min-width: 150px; }
+        .stat-value { display: block; font-size: 28px; font-weight: bold; color: #667eea; }
+        .stat-label { color: #666; font-size: 14px; }
+        .leaderboard-section { background: white; border-radius: 20px; padding: 30px; margin-bottom: 40px; }
+        .leaderboard-section h2 { margin-bottom: 20px; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .leaderboard-row { display: grid; grid-template-columns: 60px 1fr 100px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
+        .leaderboard-header { background: #f7f7f7; font-weight: bold; border-radius: 10px; margin-bottom: 5px; }
+        .current-user-row { background: #e0f2fe; font-weight: bold; }
+        .subjects-section h2 { color: white; margin-bottom: 30px; text-align: center; }
+        .subjects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .subject-card { background: white; border-radius: 20px; padding: 30px; text-align: center; transition: transform 0.3s; cursor: pointer; }
+        .subject-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .subject-icon { font-size: 48px; margin-bottom: 15px; display: inline-block; }
+        .subject-card h3 { font-size: 22px; color: #333; margin-bottom: 10px; }
+        .subject-card p { color: #666; margin-bottom: 20px; font-size: 14px; }
+        .subject-btn { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.3s; }
+        .subject-btn:hover { background: #5a67d8; }
+        
+        /* Анимация онбординга */
+        .onboarding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .onboarding-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .onboarding-icon { font-size: 70px; margin-bottom: 20px; animation: pulse 1s ease infinite; }
+        .onboarding-title { font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 20px; }
+        .onboarding-text { color: #666; line-height: 1.6; margin-bottom: 15px; text-align: left; }
+        .onboarding-highlight {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+        .onboarding-buttons { margin-top: 20px; }
+        .next-btn, .skip-btn {
+            padding: 12px 24px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .next-btn { background: #48bb78; color: white; }
+        .skip-btn { background: #ccc; }
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+        .dot.active {
+            background: #667eea;
+            width: 25px;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 1000px) { .subjects-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) {
+            .subjects-grid { grid-template-columns: 1fr; }
+            .stats { flex-direction: column; align-items: center; }
+            .stat { width: 100%; }
+            .leaderboard-row { grid-template-columns: 45px 1fr 70px; font-size: 12px; }
+            .onboarding-card { margin: 20px; padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo" onclick="location.href='main.html'">🏥 MedicalStudy</div>
+        <div><span id="userNameDisplay"></span> <button class="logout-btn" id="logoutBtn">Выйти</button></div>
+    </div>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-avatar">👤</div>
+            <h3 id="profileUsername"></h3>
+            <div class="stats">
+                <div class="stat"><span class="stat-value" id="totalPoints">0</span><div class="stat-label">Всего очков</div></div>
+                <div class="stat"><span class="stat-value" id="completedTests">0</span><div class="stat-label">Пройдено тестов</div></div>
+                <div class="stat"><span class="stat-value" id="userRank">—</span><div class="stat-label">Место в рейтинге</div></div>
+            </div>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>🏆 Общий рейтинг пользователей</h2>
+            <div id="leaderboard">Загрузка...</div>
+        </div>
+
+        <div class="subjects-section">
+            <h2>Выберите предмет для изучения</h2>
+            <div class="subjects-grid">
+                <div class="subject-card"><div class="subject-icon">🧪</div><h3>Химия</h3><p>Изучите химические процессы</p><button class="subject-btn" onclick="goToSubject('chemistry')">Изучать →</button></div>
+                <div class="subject-card"><div class="subject-icon">❤️</div><h3>Анатомия</h3><p>Строение человеческого тела</p><button class="subject-btn" onclick="goToSubject('anatomy')">Изучать →</button></div>
+                <div class="subject-card"><div class="subject-icon">🧬</div><h3>Биология</h3><p>Жизненные процессы и клетки</p><button class="subject-btn" onclick="goToSubject('biology')">Изучать →</button></div>
+                <div class="subject-card"><div class="subject-icon">🔬</div><h3>Гистология</h3><p>Ткани и микроскопия</p><button class="subject-btn" onclick="goToSubject('histology')">Изучать →</button></div>
+            </div>
+        </div>
+    </div>
+    <!-- Онбординг анимация -->
+    <div id="onboardingOverlay" class="onboarding-overlay" style="display: none;">
+        <div class="onboarding-card">
+            <div class="onboarding-icon">🎓</div>
+            <div class="onboarding-title">Добро пожаловать в MedicalStudy!</div>
+            <div id="step1" class="onboarding-step">
+                <div class="onboarding-text">👤 <strong>Ваш профиль</strong> — здесь отображаются ваши очки и количество пройденных тестов.</div>
+                <div class="onboarding-highlight">📊 Вы будете получать баллы за правильные ответы. Чем больше баллов, тем выше вы в таблице лидеров!</div>
+            </div>
+            <div id="step2" class="onboarding-step" style="display: none;">
+                <div class="onboarding-text">📚 <strong>Выбор предмета</strong> — нажмите на любой предмет, чтобы начать изучение.</div>
+                <div class="onboarding-highlight">🧪 Химия, ❤️ Анатомия, 🧬 Биология, 🔬 Гистология</div>
+            </div>
+            <div id="step3" class="onboarding-step" style="display: none;">
+                <div class="onboarding-text">🎮 <strong>Как устроен тест?</strong> — В каждом предмете вас ждут тесты с выбором ответа или ручным вводом.</div>
+                <div class="onboarding-highlight">📌 Вы можете пропускать вопросы и возвращаться к ним позже. Баллы начисляются только за первое прохождение!</div>
+            </div>
+            <div class="progress-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <div class="onboarding-buttons">
+                <button class="next-btn" id="nextBtn">Далее →</button>
+                <button class="skip-btn" id="skipBtn">Пропустить</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        
+        // ========== ВСТАВЬТЕ ВАШУ КОНФИГУРАЦИЮ FIREBASE ==========
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyBy7S7ebaj3JXCLI00GgU4kmnZxMu9BVds",
+
+  authDomain: "medical-study-801ff.firebaseapp.com",
+
+  projectId: "medical-study-801ff",
+
+  storageBucket: "medical-study-801ff.firebasestorage.app",
+
+  messagingSenderId: "957200826650",
+
+  appId: "1:957200826650:web:b9c830bee6fe1a584feca3"
+
+};
+
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        
+        const savedUser = localStorage.getItem('currentUser');
+        if (!savedUser) { window.location.href = 'index.html'; }
+        
+        const currentUser = JSON.parse(savedUser);
+        
+        // Загрузка данных пользователя из Firebase
+        async function loadUserData() {
+            try {
+                const userRef = doc(db, 'users', currentUser.id);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    document.getElementById('profileUsername').textContent = escapeHtml(userData.username);
+                    document.getElementById('totalPoints').textContent = userData.totalPoints || 0;
+                    document.getElementById('completedTests').textContent = userData.completedTests || 0;
+                    document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
+                    return userData;
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки данных:', err);
+            }
+            return null;
+        }
+        
+        // Загрузка таблицы лидеров
+        async function loadLeaderboard() {
+            try {
+                const usersRef = collection(db, 'users');
+                const q = query(usersRef, orderBy('totalPoints', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                let usersList = [];
+                querySnapshot.forEach(doc => {
+                    usersList.push({ id: doc.id, ...doc.data() });
+                });
+                
+                let html = '<div class="leaderboard-row leaderboard-header"><div>#</div><div>Игрок</div><div>Очки</div></div>';
+                if (usersList.length === 0) {
+                    html += '<div class="leaderboard-row">🏆 Пока нет участников</div>';
+                } else {
+                    for (let i = 0; i < usersList.length; i++) {
+                        const r = usersList[i];
+                        const isCurrentUser = (r.id === currentUser.id);
+                        const rowClass = isCurrentUser ? 'current-user-row' : '';
+                        html += '<div class="leaderboard-row ' + rowClass + '"><div>' + (i+1) + '</div><div>' + escapeHtml(r.username) + (isCurrentUser ? ' (вы)' : '') + '</div><div>⭐ ' + (r.totalPoints || 0) + '</div></div>';
+                        if (isCurrentUser) {
+                            document.getElementById('userRank').textContent = i + 1;
+                        }
+                    }
+                }
+                document.getElementById('leaderboard').innerHTML = html;
+            } catch (err) {
+                console.error('Ошибка загрузки рейтинга:', err);
+                document.getElementById('leaderboard').innerHTML = '<div class="leaderboard-row">Ошибка загрузки рейтинга</div>';
+            }
+        }
+        
+        window.goToSubject = function(subject) {
+            window.location.href = subject + '.html';
+        };
+        
+        document.getElementById('logoutBtn').onclick = function() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        };
+        
+        // ОНБОРДИНГ
+        const onboardingShown = localStorage.getItem('onboardingShown');
+        if (!onboardingShown) {
+            setTimeout(() => {
+                document.getElementById('onboardingOverlay').style.display = 'flex';
+            }, 500);
+        }
+        
+        let currentStep = 1;
+        const totalSteps = 3;
+        
+        function updateSteps() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById('step' + i);
+                if (step) step.style.display = i === currentStep ? 'block' : 'none';
+            }
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx + 1 === currentStep) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+        
+        document.getElementById('nextBtn').onclick = () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateSteps();
+            } else {
+                finishOnboarding();
+            }
+        };
+        
+        document.getElementById('skipBtn').onclick = () => {
+            finishOnboarding();
+        };
+        
+        function finishOnboarding() {
+            document.getElementById('onboardingOverlay').style.display = 'none';
+            localStorage.setItem('onboardingShown', 'true');
+        }
+        
+        // Запуск загрузки данных
+        loadUserData();
+        loadLeaderboard();
+    </script>
+</body>
+</html>
