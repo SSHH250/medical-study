@@ -167,8 +167,8 @@
             const subject = 'anatomy';
             
             let subjectData = null;
-            if (window.MEDICAL_CONTENT && window.MEDICAL_CONTENT.chemistry) {
-                subjectData = window.MEDICAL_CONTENT.chemistry;
+            if (window.MEDICAL_CONTENT && window.MEDICAL_CONTENT.anatomy) {
+                subjectData = window.MEDICAL_CONTENT.anatomyy;
             } else {
                 document.getElementById('testsList').innerHTML = '<div class="item" style="color:red;">Ошибка: content.js не загружен</div>';
             }
@@ -190,7 +190,7 @@
                     if (userSnap.exists()) {
                         const userData = userSnap.data();
                         document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
-                        document.getElementById('subjectPoints').innerHTML = userData.subjectPoints?.chemistry || 0;
+                        document.getElementById('subjectPoints').innerHTML = userData.subjectPoints?.anatomy || 0;
                         return userData;
                     }
                 } catch (err) { console.error(err); }
@@ -224,7 +224,7 @@
                     let ratings = [];
                     querySnapshot.forEach(doc => {
                         const data = doc.data();
-                        const points = data.subjectPoints?.chemistry || 0;
+                        const points = data.subjectPoints?.anatomy || 0;
                         ratings.push({ userId: data.id, username: data.username, points: points });
                     });
                     ratings.sort((a, b) => b.points - a.points);
