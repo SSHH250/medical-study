@@ -37,7 +37,7 @@
         .subject-btn { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; transition: background 0.3s; }
         .subject-btn:hover { background: #5a67d8; }
         
-        /* Анимация онбординга */
+        /* ========== СТИЛИ ДЛЯ АНИМАЦИИ (ОНБОРДИНГ) ========== */
         .onboarding-overlay {
             position: fixed;
             top: 0;
@@ -145,7 +145,7 @@
             </div>
         </div>
     </div>
-    <!-- Онбординг анимация -->
+    <!-- ========== БЛОК АНИМАЦИИ (ОНБОРДИНГ) ========== -->
     <div id="onboardingOverlay" class="onboarding-overlay" style="display: none;">
         <div class="onboarding-card">
             <div class="onboarding-icon">🎓</div>
@@ -179,7 +179,7 @@
         import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
         
         // ========== ВСТАВЬТЕ ВАШУ КОНФИГУРАЦИЮ FIREBASE ==========
-        const firebaseConfig = {
+       const firebaseConfig = {
 
   apiKey: "AIzaSyBy7S7ebaj3JXCLI00GgU4kmnZxMu9BVds",
 
@@ -222,9 +222,7 @@
                     document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
                     return userData;
                 }
-            } catch (err) {
-                console.error('Ошибка загрузки данных:', err);
-            }
+            } catch (err) { console.error(err); }
             return null;
         }
         
@@ -256,7 +254,7 @@
                 }
                 document.getElementById('leaderboard').innerHTML = html;
             } catch (err) {
-                console.error('Ошибка загрузки рейтинга:', err);
+                console.error(err);
                 document.getElementById('leaderboard').innerHTML = '<div class="leaderboard-row">Ошибка загрузки рейтинга</div>';
             }
         }
@@ -270,11 +268,12 @@
             window.location.href = 'index.html';
         };
         
-        // ОНБОРДИНГ
+        // ========== ОНБОРДИНГ (АНИМАЦИЯ ПРИ ПЕРВОМ ВХОДЕ) ==========
         const onboardingShown = localStorage.getItem('onboardingShown');
         if (!onboardingShown) {
             setTimeout(() => {
-                document.getElementById('onboardingOverlay').style.display = 'flex';
+                const overlay = document.getElementById('onboardingOverlay');
+                if (overlay) overlay.style.display = 'flex';
             }, 500);
         }
         
@@ -293,21 +292,29 @@
             });
         }
         
-        document.getElementById('nextBtn').onclick = () => {
-            if (currentStep < totalSteps) {
-                currentStep++;
-                updateSteps();
-            } else {
-                finishOnboarding();
-            }
-        };
+        const nextBtn = document.getElementById('nextBtn');
+        const skipBtn = document.getElementById('skipBtn');
         
-        document.getElementById('skipBtn').onclick = () => {
-            finishOnboarding();
-        };
+        if (nextBtn) {
+            nextBtn.onclick = () => {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateSteps();
+                } else {
+                    finishOnboarding();
+                }
+            };
+        }
+        
+        if (skipBtn) {
+            skipBtn.onclick = () => {
+                finishOnboarding();
+            };
+        }
         
         function finishOnboarding() {
-            document.getElementById('onboardingOverlay').style.display = 'none';
+            const overlay = document.getElementById('onboardingOverlay');
+            if (overlay) overlay.style.display = 'none';
             localStorage.setItem('onboardingShown', 'true');
         }
         
