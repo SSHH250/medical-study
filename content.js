@@ -83,15 +83,15 @@ window.MEDICAL_CONTENT = {
                 numberOfQuestions: 3,
                 questionBanks: [
                     {
-                        topic: "Фенолы",
+                        topic: " ",
                         questions: [
                             { 
                                 type: "image-text-input", 
-                                text: "Кто на фото?", 
-                                image: "images/lamblia intestinalis.jpg",
-                                correct: "фенол",
+                                text: "Какой паразит на фото?", 
+                                image: "images/lambliaIntestinalis.jpg",
+                                correct: "lamblia intestinalis",
                                 caseSensitive: false,
-                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
+                                explanation: " "
                             },
                             { 
                                 type: "text-input", 
