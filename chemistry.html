@@ -38,6 +38,8 @@
         .question-card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; }
         .question-text { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
         .question-topic { background: #e0e7ff; padding: 5px 12px; border-radius: 20px; display: inline-block; margin-bottom: 15px; font-size: 13px; }
+        .question-image { text-align: center; margin: 15px 0; }
+        .question-image img { max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 10px; }
         .options-list { display: flex; flex-direction: column; gap: 12px; }
         .option { padding: 12px 16px; background: #f7f7f7; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .option:hover { background: #e8e8e8; transform: translateX(5px); }
@@ -60,27 +62,18 @@
         
         .first-time-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000;
-            display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s ease;
+            display: flex; align-items: center; justify-content: center; padding: 10px;
         }
         .first-time-card {
-    background: white;
-    border-radius: 30px;
-    padding: 30px 25px;
-    max-width: 90%;
-    width: 500px;
-    max-height: 85vh;
-    overflow-y: auto;
-    text-align: center;
-    animation: slideUp 0.5s ease;
-}
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            background: white; border-radius: 30px; padding: 30px 25px; max-width: 90%; width: 500px; max-height: 85vh; overflow-y: auto;
+            text-align: center; animation: slideUp 0.5s ease;
+        }
         @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .first-time-icon { font-size: 70px; margin-bottom: 20px; animation: pulse 1s ease infinite; }
         .first-time-title { font-size: 28px; font-weight: bold; color: #667eea; margin-bottom: 20px; }
-        .first-time-warning { background: #fef3c7; padding: 15px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #f59e0b; text-align: left; }
-        .first-time-button { padding: 14px 28px; background: #48bb78; color: white; border: none; border-radius: 15px; font-size: 18px; cursor: pointer; margin-top: 20px; }
-        .first-time-button:hover { transform: scale(1.05); background: #38a169; }
+        .first-time-warning { background: #fef3c7; padding: 15px; border-radius: 15px; margin: 20px 0; border-left: 4px solid #f59e0b; text-align: left; font-size: 14px; }
+        .first-time-button { padding: 14px 28px; background: #48bb78; color: white; border: none; border-radius: 15px; font-size: 18px; cursor: pointer; margin-top: 20px; width: 100%; }
         
         .confirm-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
         .confirm-content { background: white; border-radius: 20px; padding: 30px; max-width: 400px; text-align: center; }
@@ -95,26 +88,6 @@
         .leaderboard-row { display: grid; grid-template-columns: 60px 1fr 100px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
         .leaderboard-header { background: #f7f7f7; font-weight: bold; border-radius: 10px; margin-bottom: 5px; }
         .current-user-row { background: #e0f2fe; font-weight: bold; }
-        @media (max-width: 480px) {
-    .first-time-card {
-        padding: 15px 12px;
-    }
-    .first-time-title {
-        font-size: 18px;
-    }
-    .first-time-warning {
-        font-size: 11px;
-        padding: 8px;
-        margin: 10px 0;
-    }
-    .first-time-button {
-        padding: 10px 16px;
-        font-size: 14px;
-    }
-    .first-time-icon {
-        font-size: 40px;
-    }
-}
         
         @media (max-width: 768px) {
             .modal-content { width: 95%; margin: 10% auto; padding: 15px; }
@@ -123,34 +96,12 @@
             .nav-btn { width: 38px; height: 38px; font-size: 14px; }
             .question-card { padding: 20px; }
             .question-text { font-size: 18px; }
-            .first-time-card { margin: 20px; padding: 25px; }
-            .first-time-title { font-size: 22px; }
             .leaderboard-row { grid-template-columns: 45px 1fr 70px; font-size: 12px; }
-             .first-time-card {
-        padding: 20px 15px;
-        width: 95%;
-        max-height: 80vh;
-    }
-    .first-time-title {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-    .first-time-warning {
-        padding: 10px;
-        margin: 12px 0;
-        font-size: 12px;
-    }
-    .first-time-icon {
-        font-size: 50px;
-        margin-bottom: 10px;
-    }
-    .first-time-button {
-        padding: 12px 20px;
-        font-size: 16px;
-        margin-top: 15px;
-        width: 100%;
-    }
-
+            .first-time-card { padding: 20px 15px; width: 95%; max-height: 80vh; }
+            .first-time-title { font-size: 20px; }
+            .first-time-warning { padding: 10px; margin: 12px 0; font-size: 12px; }
+            .first-time-icon { font-size: 50px; }
+            .first-time-button { padding: 12px 20px; font-size: 16px; }
         }
     </style>
 </head>
@@ -178,7 +129,7 @@
             <div class="first-time-warning">💰 <strong>Начисление баллов</strong><br>При первом прохождении вы получите баллы. Баллы начисляются только один раз!</div>
             <div class="first-time-warning">🎲 <strong>Случайные вопросы</strong><br>Каждый раз вопросы выбираются случайно, а варианты ответов перемешиваются!</div>
             <div class="first-time-warning">🚫 <strong>Нельзя выйти</strong><br>Во время первого прохождения вы не сможете выйти из теста.</div>
-            <div class="first-time-warning">🔄 <strong>Повторное прохождение</strong><br>После получения баллов вы сможете перепроходить тест сколько угодно раз для закрепления, но баллы уже не начисляются.</div>
+            <div class="first-time-warning">🔄 <strong>Повторное прохождение</strong><br>После получения баллов вы сможете перепроходить тест сколько угодно раз для закрепления.</div>
             <button class="first-time-button" id="firstTimeConfirmBtn">✅ Понятно, начинаю тест!</button>
         </div>
     </div>
@@ -187,23 +138,14 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-        
-        // ========== ВСТАВЬТЕ ВАШУ КОНФИГУРАЦИЮ FIREBASE ==========
-       const firebaseConfig = {
-
-  apiKey: "AIzaSyBy7S7ebaj3JXCLI00GgU4kmnZxMu9BVds",
-
-  authDomain: "medical-study-801ff.firebaseapp.com",
-
-  projectId: "medical-study-801ff",
-
-  storageBucket: "medical-study-801ff.firebasestorage.app",
-
-  messagingSenderId: "957200826650",
-
-  appId: "1:957200826650:web:b9c830bee6fe1a584feca3"
-
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyB...",
+            authDomain: "medical-study.firebaseapp.com",
+            projectId: "medical-study",
+            storageBucket: "medical-study.firebasestorage.app",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -213,404 +155,487 @@
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
         
-        // Проверка авторизации
         const savedUser = localStorage.getItem('currentUser');
-        if (!savedUser) {
-            location.href = 'index.html';
-        } else {
-            const currentUser = JSON.parse(savedUser);
-            const subject = 'chemistry';
-            
-            let subjectData = null;
-            if (window.MEDICAL_CONTENT && window.MEDICAL_CONTENT.chemistry) {
-                subjectData = window.MEDICAL_CONTENT.chemistry;
-            } else {
-                document.getElementById('testsList').innerHTML = '<div class="item" style="color:red;">Ошибка: content.js не загружен</div>';
-            }
-            
-            // Хранилище пройденных тестов
-            let completedTests = {};
-            const completedKey = 'completed_tests_' + currentUser.id;
-            const savedCompleted = localStorage.getItem(completedKey);
-            if (savedCompleted) completedTests = JSON.parse(savedCompleted);
-            
-            function hasPoints(testId) { return completedTests[testId] === true; }
-            function markPoints(testId) { completedTests[testId] = true; localStorage.setItem(completedKey, JSON.stringify(completedTests)); }
-            
-            // Загрузка данных пользователя из Firebase
-            async function loadUserData() {
-                try {
-                    const userRef = doc(db, 'users', currentUser.id);
-                    const userSnap = await getDoc(userRef);
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
-                        document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
-                        document.getElementById('subjectPoints').innerHTML = userData.subjectPoints?.chemistry || 0;
-                        return userData;
-                    }
-                } catch (err) { console.error(err); }
-                return null;
-            }
-            loadUserData();
-            
-            // Обновление баллов в Firebase
-            async function updateUserPoints(subject, earnedPoints, testCompleted = false) {
-                try {
-                    const userRef = doc(db, 'users', currentUser.id);
-                    const userSnap = await getDoc(userRef);
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
-                        const subjectPoints = userData.subjectPoints || { chemistry: 0, anatomy: 0, biology: 0, histology: 0 };
-                        subjectPoints[subject] = (subjectPoints[subject] || 0) + earnedPoints;
-                        const newTotalPoints = (userData.totalPoints || 0) + earnedPoints;
-                        const newCompletedTests = (userData.completedTests || 0) + (testCompleted ? 1 : 0);
-                        await updateDoc(userRef, { subjectPoints, totalPoints: newTotalPoints, completedTests: newCompletedTests });
-                        return true;
-                    }
-                } catch (err) { console.error('Firebase update error:', err); }
-                return false;
-            }
-            
-            // Таблица лидеров из Firebase
-            async function loadLeaderboard() {
-                try {
-                    const usersRef = collection(db, 'users');
-                    const querySnapshot = await getDocs(usersRef);
-                    let ratings = [];
-                    querySnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const points = data.subjectPoints?.chemistry || 0;
-                        ratings.push({ userId: data.id, username: data.username, points: points });
-                    });
-                    ratings.sort((a, b) => b.points - a.points);
-                    let html = '<div class="leaderboard-row leaderboard-header"><div>#</div><div>Игрок</div><div>Очки</div></div>';
-                    if (ratings.length === 0) { html += '<div class="leaderboard-row">🏆 Пока нет участников</div>'; }
-                    else {
-                        for (let i = 0; i < ratings.length; i++) {
-                            const r = ratings[i];
-                            const isCurrentUser = (r.userId === currentUser.id);
-                            const rowClass = isCurrentUser ? 'current-user-row' : '';
-                            html += '<div class="leaderboard-row ' + rowClass + '"><div>' + (i+1) + '</div><div>' + escapeHtml(r.username) + (isCurrentUser ? ' (вы)' : '') + '</div><div>⭐ ' + r.points + '</div></div>';
-                        }
-                    }
-                    document.getElementById('leaderboard').innerHTML = html;
-                } catch (err) { console.error(err); document.getElementById('leaderboard').innerHTML = '<div class="leaderboard-row">Ошибка загрузки</div>'; }
-            }
-            loadLeaderboard();
-            
-            // Темы
-            if (subjectData && subjectData.topics) {
-                let topicsHtml = '';
-                for (let t of subjectData.topics) {
-                    if (t.isAvailable) {
-                        topicsHtml += '<div class="item"><span>📖 <a href="topic.html?id=' + encodeURIComponent(t.id) + '" style="text-decoration:none; color:#333; font-weight:bold;">' + escapeHtml(t.title) + '</a></span><span style="color:green;">✅ Доступно</span></div>';
+        if (!savedUser) { location.href = 'index.html'; }
+        
+        const currentUser = JSON.parse(savedUser);
+        const subject = 'chemistry';
+        
+        let subjectData = null;
+        if (window.MEDICAL_CONTENT && window.MEDICAL_CONTENT.chemistry) {
+            subjectData = window.MEDICAL_CONTENT.chemistry;
+        }
+        
+        let completedTests = {};
+        const completedKey = 'completed_tests_' + currentUser.id;
+        const savedCompleted = localStorage.getItem(completedKey);
+        if (savedCompleted) completedTests = JSON.parse(savedCompleted);
+        
+        function hasPoints(testId) { return completedTests[testId] === true; }
+        function markPoints(testId) { completedTests[testId] = true; localStorage.setItem(completedKey, JSON.stringify(completedTests)); }
+        
+        async function loadUserData() {
+            try {
+                const userRef = doc(db, 'users', currentUser.id);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    document.getElementById('userNameDisplay').innerHTML = '👤 ' + escapeHtml(userData.username);
+                    document.getElementById('subjectPoints').innerHTML = userData.subjectPoints?.chemistry || 0;
+                }
+            } catch (err) { console.error(err); }
+        }
+        loadUserData();
+        
+        async function updateUserPoints(subject, earnedPoints, testCompleted = false) {
+            try {
+                const userRef = doc(db, 'users', currentUser.id);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const subjectPoints = userData.subjectPoints || { chemistry: 0, anatomy: 0, biology: 0, histology: 0 };
+                    subjectPoints[subject] = (subjectPoints[subject] || 0) + earnedPoints;
+                    const newTotalPoints = (userData.totalPoints || 0) + earnedPoints;
+                    const newCompletedTests = (userData.completedTests || 0) + (testCompleted ? 1 : 0);
+                    await updateDoc(userRef, { subjectPoints, totalPoints: newTotalPoints, completedTests: newCompletedTests });
+                }
+            } catch (err) { console.error(err); }
+        }
+        
+        async function loadLeaderboard() {
+            try {
+                const usersRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersRef);
+                let ratings = [];
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    ratings.push({ userId: data.id, username: data.username, points: data.subjectPoints?.chemistry || 0 });
+                });
+                ratings.sort((a, b) => b.points - a.points);
+                let html = '<div class="leaderboard-row leaderboard-header"><div>#</div><div>Игрок</div><div>Очки</div></div>';
+                if (ratings.length === 0) { html += '<div class="leaderboard-row">🏆 Пока нет участников</div>'; }
+                else {
+                    for (let i = 0; i < ratings.length; i++) {
+                        const r = ratings[i];
+                        const isCurrentUser = (r.userId === currentUser.id);
+                        const rowClass = isCurrentUser ? 'current-user-row' : '';
+                        html += '<div class="leaderboard-row ' + rowClass + '"><div>' + (i+1) + '</div><div>' + escapeHtml(r.username) + (isCurrentUser ? ' (вы)' : '') + '</div><div>⭐ ' + r.points + '</div></div>';
                     }
                 }
-                document.getElementById('topicsList').innerHTML = topicsHtml || '<div class="item">Нет тем</div>';
+                document.getElementById('leaderboard').innerHTML = html;
+            } catch (err) { console.error(err); }
+        }
+        loadLeaderboard();
+        
+        if (subjectData && subjectData.topics) {
+            let topicsHtml = '';
+            for (let t of subjectData.topics) {
+                if (t.isAvailable) {
+                    topicsHtml += '<div class="item"><span>📖 <a href="topic.html?id=' + encodeURIComponent(t.id) + '" style="text-decoration:none; color:#333; font-weight:bold;">' + escapeHtml(t.title) + '</a></span><span style="color:green;">✅ Доступно</span></div>';
+                }
             }
-            
-            // ========== ЛОГИКА ТЕСТА ==========
-            let currentTest = null, currentQuestions = [], userAnswers = [], questionStatus = [], currentQIndex = 0, shouldAwardPoints = true;
-            let pendingTestId = null, pendingAward = null;
-            
-            function shuffleArray(arr) { const a = [...arr]; for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-            function shuffleQuestionOptions(q) {
-                if (q.type !== 'choice' && q.type !== 'image-choice') return q;
-                const optsWithIdx = q.options.map((opt, idx) => ({ text: opt, orig: idx }));
-                const shuffled = shuffleArray(optsWithIdx);
-                const newQ = JSON.parse(JSON.stringify(q));
-                newQ.options = shuffled.map(item => item.text);
-                newQ.correct = shuffled.findIndex(item => item.orig === q.correct);
-                return newQ;
-            }
-            function generateQuestions(test) {
-                const banks = test.questionBanks;
-                const count = test.numberOfQuestions || banks.length;
-                const shuffledBanks = shuffleArray(banks);
-                const selected = shuffledBanks.slice(0, count);
-                const result = [];
-                for (let b of selected) {
-                    const rand = Math.floor(Math.random() * b.questions.length);
-                    let q = JSON.parse(JSON.stringify(b.questions[rand]));
-                    q.topic = b.topic;
+            document.getElementById('topicsList').innerHTML = topicsHtml || '<div class="item">Нет тем</div>';
+        }
+        
+        // ========== ЛОГИКА ТЕСТА ==========
+        let currentTest = null, currentQuestions = [], userAnswers = [], questionStatus = [], currentQIndex = 0, shouldAwardPoints = true;
+        let pendingTestId = null, pendingAward = null;
+        
+        function shuffleArray(arr) { const a = [...arr]; for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+        
+        function shuffleQuestionOptions(q) {
+            if (q.type !== 'choice' && q.type !== 'image-choice') return q;
+            const optsWithIdx = q.options.map((opt, idx) => ({ text: opt, orig: idx }));
+            const shuffled = shuffleArray(optsWithIdx);
+            const newQ = JSON.parse(JSON.stringify(q));
+            newQ.options = shuffled.map(item => item.text);
+            newQ.correct = shuffled.findIndex(item => item.orig === q.correct);
+            return newQ;
+        }
+        
+        function generateQuestions(test) {
+            const banks = test.questionBanks;
+            const count = test.numberOfQuestions || banks.length;
+            const shuffledBanks = shuffleArray(banks);
+            const selected = shuffledBanks.slice(0, count);
+            const result = [];
+            for (let b of selected) {
+                const rand = Math.floor(Math.random() * b.questions.length);
+                let q = JSON.parse(JSON.stringify(b.questions[rand]));
+                q.topic = b.topic;
+                if (q.type === 'choice' || q.type === 'image-choice') {
                     q = shuffleQuestionOptions(q);
-                    result.push(q);
                 }
-                return result;
+                result.push(q);
             }
-            function isAnswerCorrect(q, ans) {
-                if (q.type === 'text-input'||q.type === 'image-text-input') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
-                return ans === q.correct;
+            return result;
+        }
+        
+        function isAnswerCorrect(q, ans) {
+            if (q.type === 'text-input' || q.type === 'image-text-input') {
+                if (!ans || !q.correct) return false;
+                return String(ans).toLowerCase().trim() === String(q.correct).toLowerCase().trim();
             }
+            return ans === q.correct;
+        }
+        
+        function updateNavPanel() {
+            const navDiv = document.getElementById('questionsNav');
+            if (!navDiv) return;
+            let answered = 0, skipped = 0;
+            for (let s of questionStatus) {
+                if (s === 'answered') answered++;
+                else if (s === 'skipped') skipped++;
+            }
+            document.getElementById('statAnswered').innerHTML = answered;
+            document.getElementById('statSkipped').innerHTML = skipped;
+            let html = '';
+            for (let i = 0; i < currentQuestions.length; i++) {
+                let cls = '';
+                if (questionStatus[i] === 'answered') cls = 'answered';
+                else if (questionStatus[i] === 'skipped') cls = 'skipped';
+                else cls = 'unseen';
+                if (i === currentQIndex) cls += ' current';
+                html += '<div class="nav-btn ' + cls + '" onclick="goToQuestion(' + i + ')">' + (i+1) + '</div>';
+            }
+            navDiv.innerHTML = html;
+        }
+        
+        function renderCurrentQuestion() {
+            const container = document.getElementById('currentQuestionContainer');
+            if (!container) return;
+            const q = currentQuestions[currentQIndex];
+            let html = '';
+            if (q.topic) html += '<div class="question-topic">📌 Тема: ' + escapeHtml(q.topic) + '</div>';
+            if (questionStatus[currentQIndex] === 'skipped') html += '<div style="background:#fef3c7; padding:10px; border-radius:10px; margin-bottom:15px;">⏭️ Этот вопрос был пропущен. Вы можете ответить на него сейчас.</div>';
+            html += '<div class="question-text">' + escapeHtml(q.text) + '</div>';
             
-            function updateNavPanel() {
-                const navDiv = document.getElementById('questionsNav');
-                if (!navDiv) return;
-                let answered = 0, skipped = 0;
-                for (let s of questionStatus) {
-                    if (s === 'answered') answered++;
-                    else if (s === 'skipped') skipped++;
+            if (q.type === 'text-input') {
+                let val = userAnswers[currentQIndex] || '';
+                val = val.replace(/"/g, '&quot;');
+                html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
+                html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
+            } else if (q.type === 'image-text-input') {
+                if (q.image) {
+                    html += '<div class="question-image"><img src="' + q.image + '" alt="Рисунок" onerror="this.src=\'https://via.placeholder.com/300x200?text=Изображение+не+загружено\'" style="max-width:100%; border-radius:10px; margin-bottom:20px;"></div>';
                 }
-                document.getElementById('statAnswered').innerHTML = answered;
-                document.getElementById('statSkipped').innerHTML = skipped;
-                let html = '';
-                for (let i = 0; i < currentQuestions.length; i++) {
-                    let cls = '';
-                    if (questionStatus[i] === 'answered') cls = 'answered';
-                    else if (questionStatus[i] === 'skipped') cls = 'skipped';
-                    else cls = 'unseen';
-                    if (i === currentQIndex) cls += ' current';
-                    html += '<div class="nav-btn ' + cls + '" onclick="goToQuestion(' + i + ')">' + (i+1) + '</div>';
+                let val = userAnswers[currentQIndex] || '';
+                val = val.replace(/"/g, '&quot;');
+                html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
+                html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
+            } else if (q.type === 'image-choice') {
+                if (q.image) {
+                    html += '<div class="question-image"><img src="' + q.image + '" alt="Рисунок" onerror="this.src=\'https://via.placeholder.com/300x200?text=Изображение+не+загружено\'" style="max-width:100%; border-radius:10px; margin-bottom:20px;"></div>';
                 }
-                navDiv.innerHTML = html;
-            }
-            
-            function renderCurrentQuestion() {
-                const container = document.getElementById('currentQuestionContainer');
-                if (!container) return;
-                const q = currentQuestions[currentQIndex];
-                let html = '';
-                if (q.topic) html += '<div class="question-topic">📌 Тема: ' + escapeHtml(q.topic) + '</div>';
-                if (questionStatus[currentQIndex] === 'skipped') html += '<div style="background:#fef3c7; padding:10px; border-radius:10px; margin-bottom:15px;">⏭️ Этот вопрос был пропущен. Вы можете ответить на него сейчас.</div>';
-                html += '<div class="question-text">' + escapeHtml(q.text) + '</div>';
-                
-                if (q.type === 'text-input') {
-    let val = userAnswers[currentQIndex] || '';
-    val = val.replace(/"/g, '&quot;');
-    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
-    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
-} else if (q.type === 'image-text-input') {
-    // НОВЫЙ ТИП: картинка + ручной ввод
-    if (q.image) {
-        html += '<div class="question-image"><img src="' + q.image + '" alt="Рисунок" onerror="this.src=\'https://via.placeholder.com/300x200?text=Изображение+не+загружено\'" style="max-width:100%; border-radius:10px; margin-bottom:20px;"></div>';
-    }
-    let val = userAnswers[currentQIndex] || '';
-    val = val.replace(/"/g, '&quot;');
-    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
-    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
-} else {
-    // обработка choice (варианты ответов)
-    html += '<div class="options-list">';
-    for (let i = 0; i < q.options.length; i++) {
-        const selected = (userAnswers[currentQIndex] === i);
-        html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
-    }
-    html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
-}
-                container.innerHTML = '<div class="question-card">' + html + '</div>';
-                if (q.type === 'text-input') {
-                    const inp = document.getElementById('textAnswer');
-                    if (inp) {
-                        inp.oninput = function(e) {
-                            userAnswers[currentQIndex] = e.target.value;
-                            if (e.target.value.trim() !== '') questionStatus[currentQIndex] = 'temp_answered';
-                            else if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'skipped';
-                            updateNavPanel();
-                        };
-                    }
+                html += '<div class="options-list">';
+                for (let i = 0; i < q.options.length; i++) {
+                    const selected = (userAnswers[currentQIndex] === i);
+                    html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
                 }
-            }
-            
-            function renderTestInterface() {
-                let answered = 0, skipped = 0;
-                for (let s of questionStatus) {
-                    if (s === 'answered') answered++;
-                    else if (s === 'skipped') skipped++;
+                html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
+            } else {
+                html += '<div class="options-list">';
+                for (let i = 0; i < q.options.length; i++) {
+                    const selected = (userAnswers[currentQIndex] === i);
+                    html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
                 }
-                let pointsMsg = shouldAwardPoints ? '<div class="info-box">💰 За этот тест можно получить баллы! Вопросы и варианты ответов случайные.</div>' : '<div class="info-box">📖 Обучающий режим. Баллы не начисляются.</div>';
-                let html = '<div class="test-wrapper">' + pointsMsg +
-                    '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped + '</span></span></div></div>' +
-                    '<div class="nav-buttons" id="questionsNav"></div></div>' +
-                    '<div id="currentQuestionContainer"></div><div class="test-actions">';
-                if (currentQIndex > 0) html += '<button class="prev-btn" onclick="prevQuestion()">← Предыдущий</button>';
-                if (currentQIndex < currentQuestions.length - 1) html += '<button class="next-btn" onclick="nextQuestion()">Следующий →</button>';
-                if (currentQIndex === currentQuestions.length - 1) html += '<button class="submit-btn" onclick="submitLastQuestion()">✅ Завершить тест</button>';
-                if (!shouldAwardPoints) html += '<button class="exit-btn" onclick="showExitConfirm()">🚪 Выйти</button>';
-                html += '</div></div>';
-                document.getElementById('testContent').innerHTML = html;
-                renderCurrentQuestion();
-                updateNavPanel();
-            }
+                html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
+                }
             
-            function submitLastQuestion() {
-                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
-                else if (questionStatus[currentQIndex] !== 'answered') questionStatus[currentQIndex] = 'skipped';
-                showConfirmModal();
-            }
+            container.innerHTML = '<div class="question-card">' + html + '</div>';
             
-            function clearAnswer() {
-                userAnswers[currentQIndex] = null;
-                questionStatus[currentQIndex] = (questionStatus[currentQIndex] === 'answered') ? 'temp_skipped' : 'skipped';
-                renderCurrentQuestion();
-                updateNavPanel();
-            }
-            
-            function showConfirmModal() {
-                let unanswered = [];
-                for (let i = 0; i < questionStatus.length; i++) if (questionStatus[i] !== 'answered') unanswered.push(i+1);
-                const modal = document.getElementById('confirmModal');
-                document.getElementById('confirmMessage').innerHTML = unanswered.length ? 'У вас есть вопросы без ответа: №' + unanswered.join(', ') : 'Все вопросы отвечены!';
-                modal.style.display = 'flex';
-            }
-            
-            function showExitConfirm() { document.getElementById('exitConfirmModal').style.display = 'flex'; }
-            function hideConfirmModal() { document.getElementById('confirmModal').style.display = 'none'; }
-            function hideExitConfirmModal() { document.getElementById('exitConfirmModal').style.display = 'none'; }
-            
-            function finishSubmit() {
-                let correct = 0, answered = 0;
-                for (let i = 0; i < currentQuestions.length; i++) {
-                    if (questionStatus[i] === 'answered' && userAnswers[i] !== null) {
-                        answered++;
-                        if (isAnswerCorrect(currentQuestions[i], userAnswers[i])) correct++;
+            if (q.type === 'text-input' || q.type === 'image-text-input') {
+                const textInput = document.getElementById('textAnswer');
+                if (textInput) {
+                    textInput.oninput = function(e) {
+                        userAnswers[currentQIndex] = e.target.value;
+                        if (e.target.value.trim() !== '') {
+                            questionStatus[currentQIndex] = 'temp_answered';
+                        } else if (questionStatus[currentQIndex] === 'temp_answered') {
+                            questionStatus[currentQIndex] = 'skipped';
                         }
+                        updateNavPanel();
+                    };
                 }
-                const percent = answered ? correct / currentQuestions.length : 0;
-                const earned = shouldAwardPoints ? Math.floor(currentTest.points * percent) : 0;
-                let details = '';
-                for (let i = 0; i < currentQuestions.length; i++) {
-                    const q = currentQuestions[i];
-                    const status = questionStatus[i];
-                    let isCor = false, userTxt = '';
-                    if (status === 'answered' && userAnswers[i] !== null) {
-                        isCor = isAnswerCorrect(q, userAnswers[i]);
-                        userTxt = q.type === 'text-input' ? userAnswers[i] : q.options[userAnswers[i]];
-                    } else if (status === 'skipped') userTxt = '⏭️ Пропущен';
-                    else userTxt = '❌ Не просмотрен';
-                    const corTxt = q.type === 'text-input' || q.type === 'image-text-input' ? q.correct : q.options[q.correct];
-                    const bg = status === 'answered' ? (isCor ? '#d4edda' : '#f8d7da') : (status === 'skipped' ? '#fef3c7' : '#e2e3e5');
-                    const icon = status === 'answered' ? (isCor ? '✓' : '✗') : (status === 'skipped' ? '⏭️' : '❌');
-                    const text = status === 'answered' ? (isCor ? 'Правильно' : 'Неправильно') : (status === 'skipped' ? 'Пропущен' : 'Не просмотрен');
-                    details += '<div style="padding:10px; margin:5px 0; background:' + bg + '; border-radius:8px;"><div><strong>' + (i+1) + '.</strong> ' + escapeHtml(q.text.substring(0,60)) + '</div>' +
-                        '<div>Ваш ответ: ' + escapeHtml(userTxt) + '</div><div>Правильный: ' + escapeHtml(corTxt) + '</div><div>' + icon + ' ' + text + '</div></div>';
-                }
-                let skipped = 0, unseen = 0;
-                for (let s of questionStatus) { if (s === 'skipped') skipped++; else if (s === 'unseen') unseen++; }
-                let resultHtml = '<div class="result-card"><h2>📊 Результат</h2><div class="score">' + correct + ' / ' + currentQuestions.length + '</div>' +
-                    '<div>Правильно: ' + correct + '</div><div>Отвечено: ' + answered + '</div><div>Пропущено: ' + skipped + '</div><div>Не просмотрено: ' + unseen + '</div>' +
-                    '<div>Процент: ' + Math.round(percent*100) + '%</div>';
-                if (shouldAwardPoints) resultHtml += '<div style="font-size:24px; margin:20px 0;">🏆 Вы заработали: ' + earned + ' из ' + currentTest.points + ' очков</div>';
-                resultHtml += '<details><summary>📋 Подробно</summary>' + details + '</details>';
-                if (shouldAwardPoints) resultHtml += '<button onclick="saveResults(' + earned + ')" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Сохранить результаты</button>';
-                else resultHtml += '<button onclick="closeResults()" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Вернуться к курсу</button>';
-                resultHtml += '</div>';
-                document.getElementById('testContent').innerHTML = resultHtml;
-                hideConfirmModal();
             }
-            
-            function closeResults() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
-            
-            async function saveResults(earned) {
-                if (shouldAwardPoints && !hasPoints(currentTest.id)) {
-                    markPoints(currentTest.id);
-                    await updateUserPoints(subject, earned, true);
-                    alert('✅ Получено ' + earned + ' очков!');
-                } else if (!shouldAwardPoints) {
-                    alert('📖 Спасибо за прохождение!');
-                } else {
-                    alert('ℹ️ Вы уже получали баллы за этот тест ранее.');
+        }
+        
+        function renderTestInterface() {
+            let answered = 0, skipped = 0;
+            for (let s of questionStatus) {
+                if (s === 'answered') answered++;
+                else if (s === 'skipped') skipped++;
+            }
+            let pointsMsg = shouldAwardPoints ? '<div class="info-box">💰 За этот тест можно получить баллы! Вопросы и варианты ответов случайные.</div>' : '<div class="info-box">📖 Обучающий режим. Баллы не начисляются.</div>';
+            let html = '<div class="test-wrapper">' + pointsMsg +
+                '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped + '</span></span></div></div>' +
+                '<div class="nav-buttons" id="questionsNav"></div></div>' +
+                '<div id="currentQuestionContainer"></div><div class="test-actions">';
+            if (currentQIndex > 0) html += '<button class="prev-btn" onclick="prevQuestion()">← Предыдущий</button>';
+            if (currentQIndex < currentQuestions.length - 1) html += '<button class="next-btn" onclick="nextQuestion()">Следующий →</button>';
+            if (currentQIndex === currentQuestions.length - 1) html += '<button class="submit-btn" onclick="submitLastQuestion()">✅ Завершить тест</button>';
+            if (!shouldAwardPoints) html += '<button class="exit-btn" onclick="showExitConfirm()">🚪 Выйти</button>';
+            html += '</div></div>';
+            document.getElementById('testContent').innerHTML = html;
+            renderCurrentQuestion();
+            updateNavPanel();
+        }
+        
+        function submitLastQuestion() {
+            if (questionStatus[currentQIndex] === 'temp_answered') {
+                questionStatus[currentQIndex] = 'answered';
+            } else if (questionStatus[currentQIndex] !== 'answered') {
+                questionStatus[currentQIndex] = 'skipped';
+            }
+            showConfirmModal();
+        }
+        
+        function clearAnswer() {
+            userAnswers[currentQIndex] = null;
+            questionStatus[currentQIndex] = (questionStatus[currentQIndex] === 'answered') ? 'temp_skipped' : 'skipped';
+            renderCurrentQuestion();
+            updateNavPanel();
+        }
+        
+        function showConfirmModal() {
+            let unanswered = [];
+            for (let i = 0; i < questionStatus.length; i++) {
+                if (questionStatus[i] !== 'answered') unanswered.push(i+1);
+            }
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('confirmMessage').innerHTML = unanswered.length ? 'У вас есть вопросы без ответа: №' + unanswered.join(', ') : 'Все вопросы отвечены!';
+            modal.style.display = 'flex';
+        }
+        
+        function showExitConfirm() { document.getElementById('exitConfirmModal').style.display = 'flex'; }
+        function hideConfirmModal() { document.getElementById('confirmModal').style.display = 'none'; }
+        function hideExitConfirmModal() { document.getElementById('exitConfirmModal').style.display = 'none'; }
+        
+        function finishSubmit() {
+            let correct = 0, answered = 0;
+            for (let i = 0; i < currentQuestions.length; i++) {
+                if (questionStatus[i] === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '') {
+                    answered++;
+                    if (isAnswerCorrect(currentQuestions[i], userAnswers[i])) {
+                        correct++;
                     }
-                document.getElementById('testModal').style.display = 'none';
-                location.reload();
+                }
             }
-            
-            function goToQuestion(idx) {
-                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
-                else if (questionStatus[currentQIndex] === 'temp_skipped') questionStatus[currentQIndex] = 'skipped';
-                currentQIndex = idx;
+            const percent = answered ? correct / currentQuestions.length : 0;
+            const earned = shouldAwardPoints ? Math.floor(currentTest.points * percent) : 0;
+            let details = '';
+            for (let i = 0; i < currentQuestions.length; i++) {
+                const q = currentQuestions[i];
+                const status = questionStatus[i];
+                let isCor = false, userTxt = '';
+                if (status === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '') {
+                    isCor = isAnswerCorrect(q, userAnswers[i]);
+                    if (q.type === 'text-input' || q.type === 'image-text-input') {
+                        userTxt = userAnswers[i];
+                    } else {
+                        userTxt = q.options[userAnswers[i]];
+                    }
+                } else if (status === 'skipped') {
+                    userTxt = '⏭️ Пропущен';
+                } else {
+                    userTxt = '❌ Не просмотрен';
+                }
+                
+                let corTxt = '';
+                if (q.type === 'text-input' || q.type === 'image-text-input') {
+                    corTxt = q.correct;
+                } else {
+                    corTxt = q.options[q.correct];
+                }
+                
+                const bg = status === 'answered' ? (isCor ? '#d4edda' : '#f8d7da') : (status === 'skipped' ? '#fef3c7' : '#e2e3e5');
+                const icon = status === 'answered' ? (isCor ? '✓' : '✗') : (status === 'skipped' ? '⏭️' : '❌');
+                const text = status === 'answered' ? (isCor ? 'Правильно' : 'Неправильно') : (status === 'skipped' ? 'Пропущен' : 'Не просмотрен');
+                details += '<div style="padding:10px; margin:5px 0; background:' + bg + '; border-radius:8px;"><div><strong>' + (i+1) + '.</strong> ' + escapeHtml(q.text.substring(0,60)) + '</div>' +
+                    '<div>Ваш ответ: ' + escapeHtml(userTxt) + '</div><div>Правильный: ' + escapeHtml(corTxt) + '</div><div>' + icon + ' ' + text + '</div></div>';
+            }
+            let resultHtml = '<div class="result-card"><h2>📊 Результат</h2><div class="score">' + correct + ' / ' + currentQuestions.length + '</div>' +
+                '<div>Правильно: ' + correct + '</div><div>Отвечено: ' + answered + '</div>' +
+                '<div>Процент: ' + Math.round(percent*100) + '%</div>';
+            if (shouldAwardPoints) resultHtml += '<div style="font-size:24px; margin:20px 0;">🏆 Вы заработали: ' + earned + ' из ' + currentTest.points + ' очков</div>';
+            resultHtml += '<details><summary>📋 Подробно</summary>' + details + '</details>';
+            if (shouldAwardPoints) resultHtml += '<button onclick="saveResults(' + earned + ')" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Сохранить результаты</button>';
+            else resultHtml += '<button onclick="closeResults()" style="padding:12px 24px; background:#48bb78; color:white; border:none; border-radius:10px; cursor:pointer;">Вернуться к курсу</button>';
+            resultHtml += '</div>';
+            document.getElementById('testContent').innerHTML = resultHtml;
+            hideConfirmModal();
+        }
+        
+        function closeResults() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
+        
+        async function saveResults(earned) {
+            if (shouldAwardPoints && !hasPoints(currentTest.id)) {
+                markPoints(currentTest.id);
+                await updateUserPoints(subject, earned, true);
+                alert('✅ Получено ' + earned + ' очков!');
+            } else if (!shouldAwardPoints) {
+                alert('📖 Спасибо за прохождение!');
+            } else {
+                alert('ℹ️ Вы уже получали баллы за этот тест ранее.');
+            }
+            document.getElementById('testModal').style.display = 'none';
+            location.reload();
+        }
+        
+        function goToQuestion(idx) {
+            if (questionStatus[currentQIndex] === 'temp_answered') {
+                questionStatus[currentQIndex] = 'answered';
+            } else if (questionStatus[currentQIndex] === 'temp_skipped') {
+                questionStatus[currentQIndex] = 'skipped';
+            }
+            currentQIndex = idx;
+            renderCurrentQuestion();
+            updateNavPanel();
+            renderTestInterface();
+        }
+        
+        function selectAnswer(idx) {
+            userAnswers[currentQIndex] = idx;
+            questionStatus[currentQIndex] = 'temp_answered';
+            renderCurrentQuestion();
+            updateNavPanel();
+        }
+        
+        function nextQuestion() {
+            if (questionStatus[currentQIndex] === 'temp_answered') {
+                questionStatus[currentQIndex] = 'answered';
+            } else if (questionStatus[currentQIndex] !== 'answered') {
+                questionStatus[currentQIndex] = 'skipped';
+            }
+            if (currentQIndex < currentQuestions.length - 1) {
+                currentQIndex++;
+                if (questionStatus[currentQIndex] === 'unseen') {
+                    questionStatus[currentQIndex] = 'unseen';
+                }
                 renderCurrentQuestion();
                 updateNavPanel();
                 renderTestInterface();
             }
-            
-            function selectAnswer(idx) {
-                userAnswers[currentQIndex] = idx;
-                questionStatus[currentQIndex] = 'temp_answered';
+        }
+        
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
                 renderCurrentQuestion();
                 updateNavPanel();
-            }
-            
-            function nextQuestion() {
-                if (questionStatus[currentQIndex] === 'temp_answered') questionStatus[currentQIndex] = 'answered';
-                else if (questionStatus[currentQIndex] !== 'answered') questionStatus[currentQIndex] = 'skipped';
-                if (currentQIndex < currentQuestions.length - 1) {
-                    currentQIndex++;
-                    if (questionStatus[currentQIndex] === 'unseen') questionStatus[currentQIndex] = 'unseen';
-                    renderCurrentQuestion();
-                    updateNavPanel();
-                    renderTestInterface();
-                }
-            }
-            
-            function prevQuestion() {
-                if (currentQIndex > 0) {
-                    currentQIndex--;
-                    renderCurrentQuestion();
-                    updateNavPanel();
-                    renderTestInterface();
-                }
-            }
-            
-            function exitTest() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
-            
-            function startTestWithConfirm(testId, award) {
-                pendingTestId = testId;
-                pendingAward = award;
-                document.getElementById('firstTimeOverlay').style.display = 'flex';
-            }
-            
-            function startTest(testId, award) {
-                currentTest = subjectData.tests.find(t => t.id === testId);
-                if (!currentTest) { alert('Тест не найден'); return; }
-                shouldAwardPoints = award;
-                currentQuestions = generateQuestions(currentTest);
-                userAnswers = new Array(currentQuestions.length).fill(null);
-                questionStatus = new Array(currentQuestions.length).fill('unseen');
-                currentQIndex = 0;
                 renderTestInterface();
-                document.getElementById('testModal').style.display = 'block';
+            }
+        }
+        
+        function exitTest() { document.getElementById('testModal').style.display = 'none'; location.reload(); }
+        
+        function startTestWithConfirm(testId, award) {
+            pendingTestId = testId;
+            pendingAward = award;
+            document.getElementById('firstTimeOverlay').style.display = 'flex';
+        }
+        
+        async function startTest(testId, award) {
+            let testFile = null;
+            if (subjectData.testFiles) {
+                for (let filePath of subjectData.testFiles) {
+                    try {
+                        const response = await fetch(filePath);
+                        if (response.ok) {
+                            const test = await response.json();
+                            if (test.id === testId) {
+                                testFile = test;
+                                break;
+                            }
+                        }
+                    } catch(e) {}
+                }
+            } else if (subjectData.tests) {
+                testFile = subjectData.tests.find(t => t.id === testId);
             }
             
-            // Делаем функции глобальными для вызова из HTML
-            window.goToQuestion = goToQuestion;
-            window.selectAnswer = selectAnswer;
-            window.nextQuestion = nextQuestion;
-            window.prevQuestion = prevQuestion;
-            window.clearAnswer = clearAnswer;
-            window.submitLastQuestion = submitLastQuestion;
-            window.showExitConfirm = showExitConfirm;
-            window.exitTest = exitTest;
-            window.startTestWithConfirm = startTestWithConfirm;
-            window.startTest = startTest;
-            window.saveResults = saveResults;
-            window.closeResults = closeResults;
-            window.showConfirmModal = showConfirmModal;
-            window.finishSubmit = finishSubmit;
+            if (!testFile) {
+                alert('Тест не найден');
+                return;
+            }
             
-            // Тесты из content.js
-            if (subjectData && subjectData.tests) {
-                let testsHtml = '';
-                for (let test of subjectData.tests) {
+            currentTest = testFile;
+            shouldAwardPoints = award;
+            currentQuestions = generateQuestions(currentTest);
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            questionStatus = new Array(currentQuestions.length).fill('unseen');
+            currentQIndex = 0;
+            renderTestInterface();
+            document.getElementById('testModal').style.display = 'block';
+        }
+        
+        window.goToQuestion = goToQuestion;
+        window.selectAnswer = selectAnswer;
+        window.nextQuestion = nextQuestion;
+        window.prevQuestion = prevQuestion;
+        window.clearAnswer = clearAnswer;
+        window.submitLastQuestion = submitLastQuestion;
+        window.showExitConfirm = showExitConfirm;
+        window.exitTest = exitTest;
+        window.startTestWithConfirm = startTestWithConfirm;
+        window.startTest = startTest;
+        window.saveResults = saveResults;
+        window.closeResults = closeResults;
+        window.showConfirmModal = showConfirmModal;
+        window.finishSubmit = finishSubmit;
+        
+        // Отображение списка тестов
+        async function loadTestsList() {
+            const testsContainer = document.getElementById('testsList');
+            if (!subjectData.testFiles || subjectData.testFiles.length === 0) {
+                testsContainer.innerHTML = '<div class="item">Нет тестов</div>';
+                return;
+            }
+            testsContainer.innerHTML = '<div class="item">Загрузка тестов...</div>';
+            let testsHtml = '';
+            for (let filePath of subjectData.testFiles) {
+                try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) throw new Error();
+                    const test = await response.json();
                     const hp = hasPoints(test.id);
                     if (!hp) {
                         testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
                     } else {
                         testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
                     }
+                } catch(err) {
+                    testsHtml += '<div class="item" style="color:red;">❌ Ошибка загрузки: ' + escapeHtml(filePath) + '</div>';
                 }
-                document.getElementById('testsList').innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
             }
-            
-            document.getElementById('firstTimeConfirmBtn').onclick = function() {
-                document.getElementById('firstTimeOverlay').style.display = 'none';
-                startTest(pendingTestId, pendingAward);
-            };
-            document.getElementById('confirmCancel').onclick = hideConfirmModal;
-            document.getElementById('confirmOk').onclick = finishSubmit;
-            document.getElementById('exitConfirmCancel').onclick = hideExitConfirmModal;
-            document.getElementById('exitConfirmOk').onclick = exitTest;
-            document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem('currentUser'); location.href = 'index.html'; };
+            testsContainer.innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
         }
+        
+        if (subjectData && subjectData.testFiles) {
+            loadTestsList();
+        } else if (subjectData && subjectData.tests) {
+            let testsHtml = '';
+            for (let test of subjectData.tests) {
+                const hp = hasPoints(test.id);
+                if (!hp) {
+                    testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
+                } else {
+                    testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
+                }
+            }
+            document.getElementById('testsList').innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
+        }
+        
+        document.getElementById('firstTimeConfirmBtn').onclick = function() {
+            document.getElementById('firstTimeOverlay').style.display = 'none';
+            startTest(pendingTestId, pendingAward);
+        };
+        document.getElementById('confirmCancel').onclick = hideConfirmModal;
+        document.getElementById('confirmOk').onclick = finishSubmit;
+        document.getElementById('exitConfirmCancel').onclick = hideExitConfirmModal;
+        document.getElementById('exitConfirmOk').onclick = exitTest;
+        document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem('currentUser'); location.href = 'index.html'; };
     </script>
 </body>
 </html>
+        
