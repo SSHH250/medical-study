@@ -76,7 +76,7 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             },
-            {
+          {
     "id": "test_parasites_1",
     "name": "Паразитология",
     "points": 100,
@@ -181,7 +181,6 @@ window.MEDICAL_CONTENT = {
         }
     ]
 }
-            
         ],
         games: []
     },
