@@ -339,7 +339,7 @@
                 return result;
             }
             function isAnswerCorrect(q, ans) {
-                if (q.type === 'text-input'||q.type === 'text-input-image') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
+                if (q.type === 'text-input'||q.type === 'image-text-input') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
                 return ans === q.correct;
             }
             
