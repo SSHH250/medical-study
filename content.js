@@ -196,7 +196,30 @@ window.MEDICAL_CONTENT = {
                         ]
                     }
                 ]
-            }
+            id: "test_chem_2", 
+                name: "Формулы", 
+                points: 50,
+                timeLimit: 300,
+                difficulty: "easy",
+                completedBy: [],
+                // Количество вопросов в тесте
+                numberOfQuestions: 1,
+                // БАНКИ ВОПРОСОВ ПО ТЕМАМ
+                questionBanks: 
+                [
+                     {
+                        topic: "Формулы",
+                        // Из этой темы будет выбран 1 случайный вопрос
+                        questions: [
+                            {
+                                type: "text-input-image",
+                                text: "что на картинке?",
+                                image:"images/phenol.png",
+                                correct:"фенол",
+                                explanation: "Метан - простейший алкан с формулой CH₄"
+                            },
+                    
+                ]}
         ],
         games: []
     }
