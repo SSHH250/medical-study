@@ -477,7 +477,7 @@
                         userTxt = q.type === 'text-input' ? userAnswers[i] : q.options[userAnswers[i]];
                     } else if (status === 'skipped') userTxt = '⏭️ Пропущен';
                     else userTxt = '❌ Не просмотрен';
-                    const corTxt = q.type === 'text-input' || q.type === 'text-input' ? q.correct : q.options[q.correct];
+                    const corTxt = q.type === 'text-input' || q.type === 'image-text-input' ? q.correct : q.options[q.correct];
                     const bg = status === 'answered' ? (isCor ? '#d4edda' : '#f8d7da') : (status === 'skipped' ? '#fef3c7' : '#e2e3e5');
                     const icon = status === 'answered' ? (isCor ? '✓' : '✗') : (status === 'skipped' ? '⏭️' : '❌');
                     const text = status === 'answered' ? (isCor ? 'Правильно' : 'Неправильно') : (status === 'skipped' ? 'Пропущен' : 'Не просмотрен');
