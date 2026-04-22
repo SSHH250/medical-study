@@ -88,8 +88,8 @@ window.MEDICAL_CONTENT = {
                             { 
                                 type: "image-text-input", 
                                 text: "Как называется это вещество?", 
-                                image: "images/phenol.png",
-                                correct: "фенол",
+                                image: "images/lamblia intestinalis.jpg",
+                                correct: "lamblia intestinalis",
                                 caseSensitive: false,
                                 explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
                             },
