@@ -1,197 +1,111 @@
-// content.js - с поддержкой случайных вопросов по темам
-
+// content.js - с поддержкой новых типов вопросов
 window.MEDICAL_CONTENT = {
     chemistry: {
         name: "Химия",
         icon: "🧪",
         color: "#10B981",
         topics: [
-            { id: "chem_1", title: "Органическая химия", description: "Углеводороды, спирты", difficulty: "medium", isAvailable: true, contentFile:"topics/chemistry/chem_1.json"},
-            { id: "chem_2", title: "Неорганическая химия", description: "Кислоты, основания", difficulty: "easy", isAvailable: true , contentFile:"topics/chemistry/chem_2.json"}
+            { 
+                id: "chem_1", 
+                title: "Органическая химия", 
+                description: "Углеводороды, спирты, альдегиды", 
+                difficulty: "medium", 
+                isAvailable: true,
+                content: [
+                    { type: "text", value: "<strong>Органическая химия</strong> — это раздел химии, изучающий соединения углерода." }
+                ]
+            },
+            { 
+                id: "chem_2", 
+                title: "Неорганическая химия", 
+                description: "Кислоты, основания, соли", 
+                difficulty: "easy", 
+                isAvailable: true,
+                content: [
+                    { type: "text", value: "<strong>Неорганическая химия</strong> изучает элементы и их соединения, кроме органических." }
+                ]
+            },
+            { 
+                id: "chem_3", 
+                title: "Фенолы", 
+                description: "Ароматические спирты", 
+                difficulty: "hard", 
+                isAvailable: true,
+                content: [
+                    { type: "text", value: "<strong>Фенолы</strong> — органические соединения, содержащие гидроксильную группу, связанную с бензольным кольцом." }
+                ]
+            }
         ],
         tests: [
             { 
                 id: "test_chem_1", 
                 name: "Основы органической химии", 
                 points: 100,
-                timeLimit: 300,
-                difficulty: "easy",
-                completedBy: [],
-                // Количество вопросов в тесте
-                numberOfQuestions: 5,
-                // БАНКИ ВОПРОСОВ ПО ТЕМАМ
+                numberOfQuestions: 3,
                 questionBanks: [
                     {
                         topic: "Алканы",
-                        // Из этой темы будет выбран 1 случайный вопрос
                         questions: [
-                            {
-                                type: "choice",
-                                text: "Какая формула у метана?",
-                                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
-                                correct: 0,
-                                explanation: "Метан - простейший алкан с формулой CH₄"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какая формула у этана?",
-                                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
-                                correct: 1,
-                                explanation: "Этан - второй алкан, формула C₂H₆"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какая формула у пропана?",
-                                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
-                                correct: 2,
-                                explanation: "Пропан - третий алкан, формула C₃H₈"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какая формула у бутана?",
-                                options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"],
-                                correct: 3,
-                                explanation: "Бутан - четвёртый алкан, формула C₄H₁₀"
-                            },
-                            {
-                                type: "text-input",
-                                text: "Напишите формулу метана",
-                                correct: "CH4",
-                                caseSensitive: false,
-                                explanation: "Метан - CH₄"
-                            },
-                            {
-                                type: "image-choice",
-                                text: "Какая молекула изображена на рисунке?",
-                                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Methane-3D-balls.png/200px-Methane-3D-balls.png",
-                                options: ["Метан", "Этан", "Пропан", "Бутан"],
-                                correct: 0,
-                                explanation: "Это метан - простейший углеводород"
-                            }
+                            { type: "choice", text: "Какая формула у метана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 0, explanation: "Метан — CH₄" },
+                            { type: "choice", text: "Какая формула у этана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 1, explanation: "Этан — C₂H₆" },
+                            { type: "choice", text: "Какая формула у пропана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 2, explanation: "Пропан — C₃H₈" }
                         ]
                     },
                     {
-                        topic: "Химические индикаторы",
+                        topic: "Индикаторы",
                         questions: [
-                            {
-                                type: "choice",
-                                text: "Какой цвет у лакмуса в кислой среде?",
-                                options: ["Красный", "Синий", "Фиолетовый", "Зелёный"],
-                                correct: 0,
-                                explanation: "Лакмус в кислой среде становится красным"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какой цвет у лакмуса в щелочной среде?",
-                                options: ["Красный", "Синий", "Фиолетовый", "Зелёный"],
-                                correct: 1,
-                                explanation: "Лакмус в щелочной среде становится синим"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какой индикатор в кислой среде становится жёлтым?",
-                                options: ["Метилоранж", "Лакмус", "Фенолфталеин", "Бромтимоловый синий"],
-                                correct: 0,
-                                explanation: "Метилоранж в кислой среде красный/розовый, в щелочной - жёлтый"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какой индикатор в щелочной среде становится малиновым?",
-                                options: ["Фенолфталеин", "Лакмус", "Метилоранж", "Универсальный"],
-                                correct: 0,
-                                explanation: "Фенолфталеин в щелочной среде малиновый"
-                            },
-                            {
-                                type: "text-input",
-                                text: "Какой индикатор в кислой среде красный, а в щелочной синий?",
-                                correct: "лакмус",
-                                caseSensitive: false,
-                                explanation: "Лакмус - классический индикатор"
-                            }
+                            { type: "choice", text: "Какой цвет у лакмуса в кислой среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 0, explanation: "Лакмус в кислой среде красный" },
+                            { type: "choice", text: "Какой цвет у лакмуса в щелочной среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 1, explanation: "Лакмус в щелочной среде синий" }
                         ]
-                    },
+                    }
+                ]
+            },
+            { 
+                id: "test_chem_2", 
+                name: "Химические реакции", 
+                points: 80,
+                numberOfQuestions: 3,
+                questionBanks: [
                     {
-                        topic: "Химические реакции",
+                        topic: "Типы реакций",
                         questions: [
-                            {
-                                type: "choice",
-                                text: "Что такое катализатор?",
-                                options: ["Вещество, ускоряющее реакцию", "Вещество, замедляющее реакцию", "Продукт реакции", "Исходное вещество"],
-                                correct: 0,
-                                explanation: "Катализатор ускоряет реакцию, но сам не расходуется"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какой тип реакции: 2H₂ + O₂ → 2H₂O?",
-                                options: ["Соединение", "Разложение", "Замещение", "Обмен"],
-                                correct: 0,
-                                explanation: "Из простых веществ образуется сложное - реакция соединения"
-                            },
-                            {
-                                type: "choice",
-                                text: "Что такое эндотермическая реакция?",
-                                options: ["С поглощением тепла", "С выделением тепла", "Без изменения тепла", "Взрывная"],
-                                correct: 0,
-                                explanation: "Эндо - внутрь, тепло поглощается"
-                            },
-                            {
-                                type: "choice",
-                                text: "Что такое экзотермическая реакция?",
-                                options: ["С выделением тепла", "С поглощением тепла", "Без изменения тепла", "Медленная"],
-                                correct: 0,
-                                explanation: "Экзо - наружу, тепло выделяется"
-                            }
-                        ]
-                        },
+                            { type: "choice", text: "Какой тип реакции: 2H₂ + O₂ → 2H₂O?", options: ["Соединение", "Разложение", "Замещение", "Обмен"], correct: 0, explanation: "Из простых веществ образуется сложное — реакция соединения" },
+                            { type: "choice", text: "Что такое эндотермическая реакция?", options: ["С поглощением тепла", "С выделением тепла", "Без изменения тепла", "Взрывная"], correct: 0, explanation: "Эндотермическая реакция идёт с поглощением тепла" },
+                            { type: "text-input", text: "Как называется реакция между кислотой и основанием?", correct: "нейтрализация", caseSensitive: false, explanation: "Кислота + основание = соль + вода" }
+                            ]
+                    }
+                ]
+            },
+            { 
+                id: "test_chem_3", 
+                name: "Фенолы и ароматические соединения", 
+                points: 120,
+                numberOfQuestions: 3,
+                questionBanks: [
                     {
-                        topic: "Кислоты и основания",
+                        topic: "Фенолы",
                         questions: [
-                            {
-                                type: "choice",
-                                text: "Что такое pH меньше 7?",
-                                options: ["Кислая среда", "Щелочная среда", "Нейтральная среда", "Не определяется"],
-                                correct: 0,
-                                explanation: "pH < 7 - кислая среда"
-                            },
-                            {
-                                type: "choice",
-                                text: "Что такое pH больше 7?",
-                                options: ["Щелочная среда", "Кислая среда", "Нейтральная среда", "Не определяется"],
-                                correct: 0,
-                                explanation: "pH > 7 - щелочная среда"
-                            },
-                            {
-                                type: "choice",
-                                text: "Какая среда у чистой воды?",
-                                options: ["Нейтральная", "Кислая", "Щелочная", "Амфотерная"],
-                                correct: 0,
-                                explanation: "pH чистой воды = 7 - нейтральная среда"
-                            },
-                            {
-                                type: "text-input",
-                                text: "Как называется реакция между кислотой и основанием?",
-                                correct: "нейтрализация",
+                            { 
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/phenol.png",
+                                correct: "фенол",
                                 caseSensitive: false,
-                                explanation: "Кислота + основание = соль + вода"
-                            }
-                        ]
-                    },
-                    {
-                        topic: "Сложные эфиры и жиры",
-                        questions: [
-                            {
-                                type: "choice",
-                                text: "Из чего состоят жиры?",
-                                options: ["Глицерин и жирные кислоты", "Глюкоза", "Аминокислоты", "Нуклеотиды"],
-                                correct: 0,
-                                explanation: "Жиры - сложные эфиры глицерина и жирных кислот"
+                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
                             },
-                            {
-                                type: "text-input",
-                                text: "Какая реакция характерна для жиров?",
-                                correct: "омыление",
+                            { 
+                                type: "text-input", 
+                                text: "Какая функциональная группа содержится в фенолах?", 
+                                correct: "гидроксильная",
                                 caseSensitive: false,
-                                explanation: "Омыление - гидролиз жиров в щелочной среде"
+                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
+                            },
+                            { 
+                                type: "choice", 
+                                text: "Какая формула у фенола?", 
+                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
+                                correct: 0, 
+                                explanation: "Фенол — C₆H₅OH"
                             }
                         ]
                     }
@@ -199,108 +113,73 @@ window.MEDICAL_CONTENT = {
             }
         ],
         games: []
-    }
-};
-
-// Остальные предметы (анатомия, биология, гистология) пока пустые
-window.MEDICAL_CONTENT.anatomy = {
-    name: "Анатомия",
-    icon: "🫀",
-    color: "#EF4444",
-    topics: [ { id: "chem_1", title: "Анатомическое строение сердца", description: "Внешнее строение", difficulty: "medium", isAvailable: true, contentFile:"topics/chemistry/anat_1.json"},
-            { id: "chem_2", title: "Перикард, вены и артерии сердца, топография сердца", description: "артерии и вены сердца, перикард",difficulty: "easy", isAvailable: true , contentFile:"topics/chemistry/anat_2.json"}
-        
-    ],
-    tests: 
-    [
-
+    },
+    
+    // ========== АНАТОМИЯ ==========
+    anatomy: {
+        name: "Анатомия",
+        icon: "❤️",
+        color: "#EF4444",
+        topics: [
+            { 
+                id: "anat_1", 
+                title: "Скелет человека", 
+                description: "Кости, суставы, соединения", 
+                difficulty: "easy", 
+                isAvailable: true,
+                content: [
+                    { type: "text", value: "<strong>Скелет человека</strong> состоит из 206 костей и выполняет опорную, защитную и двигательную функции." }
+                ]
+            },
+            { 
+                id: "anat_2", 
+                title: "Мышечная система", 
+                description: "Мышцы, сухожилия", 
+                difficulty: "medium", 
+                isAvailable: true,
+                content: [
+                    { type: "text", value: "<strong>Мышечная система</strong> отвечает за движение тела. В теле человека около 640 мышц." }
+                ]
+            }
+        ],
+        tests: [
             { 
                 id: "test_anat_1", 
-                name: "Внешнее строение сердца", 
-                points: 150,
-                timeLimit: 300,
-                difficulty: "easy",
-                completedBy: [],
-                // Количество вопросов в тесте
-                numberOfQuestions: 1,
-                  questionBanks: 
-               [
+                name: "Кости и суставы", 
+                points: 100,
+                numberOfQuestions: 3,
+                questionBanks: [
                     {
-                        topic: "Алканы",
-                        // Из этой темы будет выбран 1 случайный вопрос
+                        topic: "Скелет",
                         questions: [
-                            {
-                               type: "choice",
-                                text: "Чего нет у сердца?",
-                                options: ["Верхушки", "Основания", "Дна", "Желудочков"],
-                                correct: 2,
-                                explanation: "У сердца нет дна"
-
-                            },
-                            {
-                              type: "choice",
-                                text: "Какая борозда отделяет предсердия от желудочков?",
-                                options: ["Передняя межжелудочковая", "Задняя межжелудочковая", "Венечная", "Медиальная"],
-                                correct: 2,
-                                explanation: "Венечная борозда отделяет предсердия от желудочков"
-
-                            },
-                            {
-                               type: "text-input",
-                                text: "Во что сливаются передняя и задняя межжелудочковая борозды в области верхушки сердца ?(Ответ дать на латыни 3-мя словами)",
-                                correct: "incisura apicis cordis",
-                                caseSensitive: false,
-                                explanation: "Верхушка сердца"
-
-                            },
-                            {
-                               type: "choice",
-                                text: "4 камеры в сердце человека, какие?",
-                                options: ["3", "2", "4", "1"],
-                                correct: 2,
-                                explanation: "4"
-
-                            },
-                            {
-                                type: "text-input",
-                                text: "Напишите формулу метана",
-                                correct: "CH4",
-                                caseSensitive: false,
-                                explanation: "Метан - CH₄"
-                            },
-                            {
-                                type: "image-choice",
-                                text: "Какая молекула изображена на рисунке?",
-                                image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Methane-3D-balls.png/200px-Methane-3D-balls.png",
-                                options: ["Метан", "Этан", "Пропан", "Бутан"],
-                                correct: 0,
-                                explanation: "Это метан - простейший углеводород"
-                            }
+                            { type: "choice", text: "Сколько костей в теле взрослого человека?", options: ["200", "206", "210", "215"], correct: 1, explanation: "Взрослый человек имеет 206 костей." },
+                            { type: "choice", text: "Какая самая длинная кость в теле человека?", options: ["Бедренная", "Большеберцовая", "Плечевая", "Локтевая"], correct: 0, explanation: "Бедренная кость — самая длинная." },
+                            { type: "text-input", text: "Как называется подвижное соединение костей?", correct: "сустав", caseSensitive: false, explanation: "Сустав — это подвижное соединение костей." }
                         ]
                     }
                 ]
             }
-    ],
-             
-    games: []
+            ],
+        games: []
+    },
+    
+    biology: {
+        name: "Биология",
+        icon: "🧬",
+        color: "#3B82F6",
+        topics: [],
+        tests: [],
+        games: []
+    },
+    
+    histology: {
+        name: "Гистология",
+        icon: "🔬",
+        color: "#8B5CF6",
+        topics: [],
+        tests: [],
+        games: []
+    }
 };
 
-window.MEDICAL_CONTENT.biology = {
-    name: "Биология",
-    icon: "🧬",
-    color: "#3B82F6",
-    topics: [],
-    tests: [],
-    games: []
-};
-
-window.MEDICAL_CONTENT.histology = {
-    name: "Гистология",
-    icon: "🔬",
-    color: "#8B5CF6",
-    topics: [],
-    tests: [],
-    games: []
-};
-
-console.log("✅ content.js загружен с банками вопросов!");
+console.log("✅ content.js загружен с поддержкой новых типов вопросов");
