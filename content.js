@@ -76,181 +76,111 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             },
-            { 
-                id: "test_chem_3", 
-                name: "Фенолы и ароматические соединения", 
-                points: 120,
-                numberOfQuestions: 3,
-                questionBanks: [
-                    {
-                        topic: "Фенолы",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/lambliaIntestinalis.jpg",
-                                correct: "lamblia intestinalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/lamblia_intestinalis2.jpg",
-                                correct: "lamblia intestinalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                            { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/lambliaintestinalis3.jpg",
-                                correct: "lamblia intestinalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/lambliaintestinalis4.jpg",
-                                correct: "lamblia intestinalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                        ]
-                    }
-                            
-                            { topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/trypanosomabruceigambiense.jpg",
-                                correct: "trypanosoma brucei gambiense",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/trypanosomabruceigambiense2.jpg",
-                                correct: "trypanosoma brucei gambiense",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/trypanosomabruceigambiense3.jpg",
-                                correct: "trypanosoma brucei gambiense",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            
-                        ],
-                         topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/balantidiumcoli.jpg",
-                                correct: "balantidium coli",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/balantidiumcoli2.jpg",
-                                correct: "balantidium coli",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            ],
-
-                         topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/toxoplasmagondii.jpg",
-                                correct: "toxoplasma gondii",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/toxoplasmagondii2.jpg",
-                                correct: "toxoplasma gondii",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            ],
-                          topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/trichomonasvaginalis.jpg",
-                                correct: "trichomonas vaginalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/trichomonas_vaginalis.jpg",
-                                correct: "trichomonas vaginalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            ],
-                         topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/schimastosomahaematobium.jpg",
-                                correct: "schimastosoma haematobium",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/schimastosomahaematobium3.jpg",
-                                correct: "schimastosoma haematobium",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/schimastosomahaematobium2.jpg",
-                                correct: "schimastosoma haematobium",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            ],
-                         topic: " ",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/fasciolahepatica.jpg",
-                                correct: "fasciola hepatica",
-                                caseSensitive: false,
-                                explanation: " "
-                            }
-                            ]
-
-                           
-                          
-                        ]
-                    }
-                ]
-            }
+          {
+    "id": "test_parasites_1",
+    "name": "Паразитология",
+    "points": 100,
+    "numberOfQuestions": 5,
+    "questionBanks": [
+        {
+            "topic": " ",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/balantidiumcoli2.jpg",
+                    "correct": "balantidium coli",
+                    "caseSensitive": false,
+                    "explanation": "Balantidium coli — инфузория, вызывающая балантидиаз"
+                }
+            ]
+        },
+        {
+            "topic": " ",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/toxoplasmagondii.jpg",
+                    "correct": "toxoplasma gondii",
+                    "caseSensitive": false,
+                    "explanation": "Toxoplasma gondii — вызывает токсоплазмоз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/toxoplasmagondii2.jpg",
+                    "correct": "toxoplasma gondii",
+                    "caseSensitive": false,
+                    "explanation": "Toxoplasma gondii — внутриклеточный паразит"
+                }
+            ]
+        },
+        {
+            "topic": " ",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/trichomonasvaginalis.jpg",
+                    "correct": "trichomonas vaginalis",
+                    "caseSensitive": false,
+                    "explanation": "Trichomonas vaginalis — вызывает трихомониаз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/trichomonas_vaginalis.jpg",
+                    "correct": "trichomonas vaginalis",
+                    "caseSensitive": false,
+                    "explanation": "Trichomonas vaginalis — жгутиконосец"
+                }
+            ]
+        },
+        {
+            "topic": " ",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — вызывает мочеполовой шистосомоз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium3.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — кровяной сосальщик"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium2.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — трематода"
+                }
+            ]
+        },
+        {
+            "topic": " ",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?",
+                    "image": "images/fasciolahepatica.jpg",
+                    "correct": "fasciola hepatica",
+                    "caseSensitive": false,
+                    "explanation": "Fasciola hepatica — вызывает фасциолёз"
+                }
+            ]
+        }
+    ]
+}
         ],
         games: []
     },
