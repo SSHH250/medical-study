@@ -88,7 +88,7 @@ window.MEDICAL_CONTENT = {
                             { 
                                 type: "image-text-input", 
                                 text: "Какой паразит на фото?", 
-                                image: "images/lambliaIntestinalis.jpg",
+                                image: "images/lamblia intestinalis.jpg",
                                 correct: "lamblia intestinalis",
                                 caseSensitive: false,
                                 explanation: " "
