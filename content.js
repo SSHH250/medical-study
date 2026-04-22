@@ -46,7 +46,7 @@ window.MEDICAL_CONTENT = {
                     {
                         topic: " ",
                         questions: [
-                            { type: "image-text-input", text: "Какой паразит на фото?", image:"images/lamblia intestinalis.jpg",correct:"lamblia intestinalis",caseSensetive: false, explanation: "Метан — CH₄" },
+                            { type: "image-text-input", text: "Какой паразит на фото?", image:"images/phenol.png",correct:"lamblia intestinalis",caseSensetive: false, explanation: "Метан — CH₄" },
                            
                            
                         ]
