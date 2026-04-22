@@ -46,7 +46,7 @@ window.MEDICAL_CONTENT = {
                     {
                         topic: " ",
                         questions: [
-                            { type: "image-text-input", text: "Какой паразит на фото?",image:"images/lamblia intestinalis",correct:"lamblia intestinalis",caseSensetive: false}
+                            { type: "image-text-input", text: "Какой паразит на фото?",image:"images/lamblia intestinalis.jpg",correct:"lamblia intestinalis",caseSensetive: false}
                            
                     },
                     {
