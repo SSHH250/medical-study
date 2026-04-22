@@ -37,57 +37,8 @@ window.MEDICAL_CONTENT = {
             }
         ],
         tests: [
-            { 
+             { 
                 id: "test_chem_1", 
-                name: "Основы органической химии", 
-                points: 100,
-                numberOfQuestions: 2,
-                questionBanks: [
-                    {
-                        topic: "Фенолы",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/phenol.png",
-                                correct: "фенол",
-                                caseSensitive: false,
-                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
-                            },
-                            { 
-                                type: "text-input", 
-                                text: "Какая функциональная группа содержится в фенолах?", 
-                                correct: "гидроксильная",
-                                caseSensitive: false,
-                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
-                            },
-                            { 
-                                type: "choice", 
-                                text: "Какая формула у фенола?", 
-                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
-                                correct: 0, 
-                                explanation: "Фенол — C₆H₅OH"
-                            }
-                        ]
-                    }
-            { 
-                id: "test_chem_2", 
-                name: "Химические реакции", 
-                points: 80,
-                numberOfQuestions: 3,
-                questionBanks: [
-                    {                                                            
-                        topic: "Типы реакций",
-                        questions: [
-                            { type: "choice", text: "Какой тип реакции: 2H₂ + O₂ → 2H₂O?", options: ["Соединение", "Разложение", "Замещение", "Обмен"], correct: 0, explanation: "Из простых веществ образуется сложное — реакция соединения" },
-                            { type: "choice", text: "Что такое эндотермическая реакция?", options: ["С поглощением тепла", "С выделением тепла", "Без изменения тепла", "Взрывная"], correct: 0, explanation: "Эндотермическая реакция идёт с поглощением тепла" },
-                            { type: "text-input", text: "Как называется реакция между кислотой и основанием?", correct: "нейтрализация", caseSensitive: false, explanation: "Кислота + основание = соль + вода" }
-                            ]
-                    }
-                ]
-            },
-            { 
-                id: "test_chem_3", 
                 name: "Фенолы и ароматические соединения", 
                 points: 120,
                 numberOfQuestions: 3,
@@ -121,6 +72,10 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             }
+               
+                   
+           
+           
         ],
         games: []
     },
