@@ -87,8 +87,8 @@ window.MEDICAL_CONTENT = {
                         questions: [
                             { 
                                 type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/phenol.png",
+                                text: "Кто на фото?", 
+                                image: "images/lamblia intestinalis.jpg",
                                 correct: "фенол",
                                 caseSensitive: false,
                                 explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
