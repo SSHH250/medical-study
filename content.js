@@ -83,42 +83,30 @@ window.MEDICAL_CONTENT = {
                 numberOfQuestions: 3,
                 questionBanks: [
                     {
-                        topic: " ",
+                        topic: "Фенолы",
                         questions: [
                             { 
                                 type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/lamblia intstinalis.jpg",
-                                correct: "lamblia intstinalis",
+                                text: "Как называется это вещество?", 
+                                image: "images/phenol.png",
+                                correct: "фенол",
                                 caseSensitive: false,
-                                explanation: " "
+                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
                             },
                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/lamblia_intstinalis2.jpg",
-                                correct: "lamblia intstinalis",
+                                type: "text-input", 
+                                text: "Какая функциональная группа содержится в фенолах?", 
+                                correct: "гидроксильная",
                                 caseSensitive: false,
-                                explanation: " "
+                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
                             },
                             { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/lamblia intstinalis3.jpg",
-                                correct: "lamblia intstinalis",
-                                caseSensitive: false,
-                                explanation: " "
-                            },
-                            { 
-                                type: "image-text-input", 
-                                text: "Какой паразит на фото?", 
-                                image: "images/lamblia intstinalis4.jpg",
-                                correct: "lamblia intstinalis",
-                                caseSensitive: false,
-                                explanation: " "
+                                type: "choice", 
+                                text: "Какая формула у фенола?", 
+                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
+                                correct: 0, 
+                                explanation: "Фенол — C₆H₅OH"
                             }
-                            
-                           
                         ]
                     }
                 ]
