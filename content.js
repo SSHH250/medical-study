@@ -76,7 +76,41 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             },
-         
+            { 
+                id: "test_chem_3", 
+                name: "Фенолы и ароматические соединения", 
+                points: 120,
+                numberOfQuestions: 3,
+                questionBanks: [
+                    {
+                        topic: "Фенолы",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/phenol.png",
+                                correct: "фенол",
+                                caseSensitive: false,
+                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
+                            },
+                            { 
+                                type: "text-input", 
+                                text: "Какая функциональная группа содержится в фенолах?", 
+                                correct: "гидроксильная",
+                                caseSensitive: false,
+                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
+                            },
+                            { 
+                                type: "choice", 
+                                text: "Какая формула у фенола?", 
+                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
+                                correct: 0, 
+                                explanation: "Фенол — C₆H₅OH"
+                            }
+                        ]
+                    }
+                ]
+            }
         ],
         games: []
     },
