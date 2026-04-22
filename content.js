@@ -44,12 +44,10 @@ window.MEDICAL_CONTENT = {
                 numberOfQuestions: 3,
                 questionBanks: [
                     {
-                        topic: "Алканы",
+                        topic: " ",
                         questions: [
-                            { type: "choice", text: "Какая формула у метана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 0, explanation: "Метан — CH₄" },
-                            { type: "choice", text: "Какая формула у этана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 1, explanation: "Этан — C₂H₆" },
-                            { type: "choice", text: "Какая формула у пропана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 2, explanation: "Пропан — C₃H₈" }
-                        ]
+                            { type: "image-text-input", text: "Какой паразит на фото?",image:"images/lamblia intestinalis",correct:"lamblia intestinalis",caseSensetive: false}
+                           
                     },
                     {
                         topic: "Индикаторы",
@@ -66,7 +64,7 @@ window.MEDICAL_CONTENT = {
                 points: 80,
                 numberOfQuestions: 3,
                 questionBanks: [
-                    {
+                    {                                                            
                         topic: "Типы реакций",
                         questions: [
                             { type: "choice", text: "Какой тип реакции: 2H₂ + O₂ → 2H₂O?", options: ["Соединение", "Разложение", "Замещение", "Обмен"], correct: 0, explanation: "Из простых веществ образуется сложное — реакция соединения" },
