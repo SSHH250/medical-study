@@ -44,20 +44,32 @@ window.MEDICAL_CONTENT = {
                 numberOfQuestions: 2,
                 questionBanks: [
                     {
-                        topic: " ",
+                        topic: "Фенолы",
                         questions: [
-                            { type: "image-text-input", text: "Какой паразит на фото?",image:"images/lamblia intestinalis.jpg",correct:"lamblia intestinalis",caseSensetive: false}
-                           
-                    },
-                    {
-                        topic: "Индикаторы",
-                        questions: [
-                            { type: "choice", text: "Какой цвет у лакмуса в кислой среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 0, explanation: "Лакмус в кислой среде красный" },
-                            { type: "choice", text: "Какой цвет у лакмуса в щелочной среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 1, explanation: "Лакмус в щелочной среде синий" }
+                            { 
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/phenol.png",
+                                correct: "фенол",
+                                caseSensitive: false,
+                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
+                            },
+                            { 
+                                type: "text-input", 
+                                text: "Какая функциональная группа содержится в фенолах?", 
+                                correct: "гидроксильная",
+                                caseSensitive: false,
+                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
+                            },
+                            { 
+                                type: "choice", 
+                                text: "Какая формула у фенола?", 
+                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
+                                correct: 0, 
+                                explanation: "Фенол — C₆H₅OH"
+                            }
                         ]
                     }
-                ]
-            },
             { 
                 id: "test_chem_2", 
                 name: "Химические реакции", 
