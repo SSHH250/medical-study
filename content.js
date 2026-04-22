@@ -88,25 +88,165 @@ window.MEDICAL_CONTENT = {
                             { 
                                 type: "image-text-input", 
                                 text: "Как называется это вещество?", 
-                                image: "images/phenol.png",
-                                correct: "фенол",
+                                image: "images/lambliaIntestinalis.jpg",
+                                correct: "lamblia intestinalis",
                                 caseSensitive: false,
-                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/lamblia_intestinalis2.jpg",
+                                correct: "lamblia intestinalis",
+                                caseSensitive: false,
+                                explanation: " "
                             },
                             { 
-                                type: "text-input", 
-                                text: "Какая функциональная группа содержится в фенолах?", 
-                                correct: "гидроксильная",
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/lambliaintestinalis3.jpg",
+                                correct: "lamblia intestinalis",
                                 caseSensitive: false,
-                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
+                                explanation: " "
                             },
-                            { 
-                                type: "choice", 
-                                text: "Какая формула у фенола?", 
-                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
-                                correct: 0, 
-                                explanation: "Фенол — C₆H₅OH"
+                             { 
+                                type: "image-text-input", 
+                                text: "Как называется это вещество?", 
+                                image: "images/lambliaintestinalis4.jpg",
+                                correct: "lamblia intestinalis",
+                                caseSensitive: false,
+                                explanation: " "
                             }
+                        ]
+                    }
+                            
+                            { topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosomabruceigambiense.jpg",
+                                correct: "trypanosoma brucei gambiense",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosomabruceigambiense2.jpg",
+                                correct: "trypanosoma brucei gambiense",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosomabruceigambiense3.jpg",
+                                correct: "trypanosoma brucei gambiense",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            
+                        ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/balantidiumcoli.jpg",
+                                correct: "balantidium coli",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/balantidiumcoli2.jpg",
+                                correct: "balantidium coli",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/toxoplasmagondii.jpg",
+                                correct: "toxoplasma gondii",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/toxoplasmagondii2.jpg",
+                                correct: "toxoplasma gondii",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                          topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trichomonasvaginalis.jpg",
+                                correct: "trichomonas vaginalis",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trichomonas_vaginalis.jpg",
+                                correct: "trichomonas vaginalis",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosomahaematobium.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosomahaematobium3.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosomahaematobium2.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/fasciolahepatica.jpg",
+                                correct: "fasciola hepatica",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ]
+
+                           
+                          
                         ]
                     }
                 ]
