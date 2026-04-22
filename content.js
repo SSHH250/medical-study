@@ -80,7 +80,7 @@ window.MEDICAL_CONTENT = {
                 id: "test_chem_3", 
                 name: "Фенолы и ароматические соединения", 
                 points: 120,
-                numberOfQuestions: 7,
+                numberOfQuestions: 1,
                 questionBanks: [
                     {
                         topic: " ",
