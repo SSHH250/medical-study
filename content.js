@@ -41,7 +41,7 @@ window.MEDICAL_CONTENT = {
                 id: "test_chem_1", 
                 name: "Основы органической химии", 
                 points: 100,
-                numberOfQuestions: 3,
+                numberOfQuestions: 2,
                 questionBanks: [
                     {
                         topic: " ",
