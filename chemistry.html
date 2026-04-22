@@ -339,7 +339,7 @@
                 return result;
             }
             function isAnswerCorrect(q, ans) {
-                if (q.type === 'text-input') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
+                if (q.type === 'text-input'||q.type === 'text-input-image') return String(ans).toLowerCase().trim() === q.correct.toLowerCase();
                 return ans === q.correct;
             }
             
@@ -375,18 +375,28 @@
                 html += '<div class="question-text">' + escapeHtml(q.text) + '</div>';
                 
                 if (q.type === 'text-input') {
-                    let val = userAnswers[currentQIndex] || '';
-                    val = val.replace(/"/g, '&quot;');
-                    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
-                    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
-                } else {
-                    html += '<div class="options-list">';
-                    for (let i = 0; i < q.options.length; i++) {
-                        const selected = (userAnswers[currentQIndex] === i);
-                        html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
-                    }
-                    html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
-                }
+    let val = userAnswers[currentQIndex] || '';
+    val = val.replace(/"/g, '&quot;');
+    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
+    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
+} else if (q.type === 'image-text-input') {
+    // НОВЫЙ ТИП: картинка + ручной ввод
+    if (q.image) {
+        html += '<div class="question-image"><img src="' + q.image + '" alt="Рисунок" onerror="this.src=\'https://via.placeholder.com/300x200?text=Изображение+не+загружено\'" style="max-width:100%; border-radius:10px; margin-bottom:20px;"></div>';
+    }
+    let val = userAnswers[currentQIndex] || '';
+    val = val.replace(/"/g, '&quot;');
+    html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
+    html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
+} else {
+    // обработка choice (варианты ответов)
+    html += '<div class="options-list">';
+    for (let i = 0; i < q.options.length; i++) {
+        const selected = (userAnswers[currentQIndex] === i);
+        html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
+    }
+    html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
+}
                 container.innerHTML = '<div class="question-card">' + html + '</div>';
                 if (q.type === 'text-input') {
                     const inp = document.getElementById('textAnswer');
