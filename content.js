@@ -76,41 +76,112 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             },
-            { 
-                id: "test_chem_3", 
-                name: "Фенолы и ароматические соединения", 
-                points: 120,
-                numberOfQuestions: 3,
-                questionBanks: [
-                    {
-                        topic: "Фенолы",
-                        questions: [
-                            { 
-                                type: "image-text-input", 
-                                text: "Как называется это вещество?", 
-                                image: "images/phenol.png",
-                                correct: "фенол",
-                                caseSensitive: false,
-                                explanation: "Фенол — C₆H₅OH, простейший представитель фенолов"
-                            },
-                            { 
-                                type: "text-input", 
-                                text: "Какая функциональная группа содержится в фенолах?", 
-                                correct: "гидроксильная",
-                                caseSensitive: false,
-                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
-                            },
-                            { 
-                                type: "choice", 
-                                text: "Какая формула у фенола?", 
-                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
-                                correct: 0, 
-                                explanation: "Фенол — C₆H₅OH"
-                            }
-                        ]
-                    }
-                ]
-            }
+            {
+    "id": "test_parasites_1",
+    "name": "Паразитология",
+    "points": 100,
+    "numberOfQuestions": 5,
+    "questionBanks": [
+        {
+            "topic": "Простейшие",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/balantidiumcoli2.jpg",
+                    "correct": "balantidium coli",
+                    "caseSensitive": false,
+                    "explanation": "Balantidium coli — инфузория, вызывающая балантидиаз"
+                }
+            ]
+        },
+        {
+            "topic": "Токсоплазма",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/toxoplasmagondii.jpg",
+                    "correct": "toxoplasma gondii",
+                    "caseSensitive": false,
+                    "explanation": "Toxoplasma gondii — вызывает токсоплазмоз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/toxoplasmagondii2.jpg",
+                    "correct": "toxoplasma gondii",
+                    "caseSensitive": false,
+                    "explanation": "Toxoplasma gondii — внутриклеточный паразит"
+                }
+            ]
+        },
+        {
+            "topic": "Трихомонада",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/trichomonasvaginalis.jpg",
+                    "correct": "trichomonas vaginalis",
+                    "caseSensitive": false,
+                    "explanation": "Trichomonas vaginalis — вызывает трихомониаз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/trichomonas_vaginalis.jpg",
+                    "correct": "trichomonas vaginalis",
+                    "caseSensitive": false,
+                    "explanation": "Trichomonas vaginalis — жгутиконосец"
+                }
+            ]
+        },
+        {
+            "topic": "Шистосомы",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — вызывает мочеполовой шистосомоз"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium3.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — кровяной сосальщик"
+                },
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?", 
+                    "image": "images/schimastosomahaematobium2.jpg",
+                    "correct": "schistosoma haematobium",
+                    "caseSensitive": false,
+                    "explanation": "Schistosoma haematobium — трематода"
+                }
+            ]
+        },
+        {
+            "topic": "Печёночный сосальщик",
+            "questions": [
+                { 
+                    "type": "image-text-input", 
+                    "text": "Какой паразит на фото?",
+                    "image": "images/fasciolahepatica.jpg",
+                    "correct": "fasciola hepatica",
+                    "caseSensitive": false,
+                    "explanation": "Fasciola hepatica — вызывает фасциолёз"
+                }
+            ]
+        }
+    ]
+}
+            
         ],
         games: []
     },
