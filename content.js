@@ -51,16 +51,8 @@ window.MEDICAL_CONTENT = {
                             { type: "choice", text: "Какая формула у пропана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 2, explanation: "Пропан — C₃H₈" }
                         ]
                     },
-                    {
-                        topic: "Индикаторы",
-                        questions: [
-                            { type: "choice", text: "Какой цвет у лакмуса в кислой среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 0, explanation: "Лакмус в кислой среде красный" },
-                            { type: "choice", text: "Какой цвет у лакмуса в щелочной среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 1, explanation: "Лакмус в щелочной среде синий" }
-                        ]
-                    }
-                ]
-            },
-            { 
+                   
+             { 
                 id: "test_chem_2", 
                 name: "Химические реакции", 
                 points: 80,
