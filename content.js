@@ -145,7 +145,109 @@ window.MEDICAL_CONTENT = {
                                 explanation: " "
                             }
                             
-                        ]
+                        ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/balantidium coli.jpg",
+                                correct: "balantidium coli",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/balantidium coli2.jpg",
+                                correct: "balantidium coli",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/toxoplasma gondii.jpg",
+                                correct: "toxoplasma gondii",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/toxoplasma gondii2.jpg",
+                                correct: "toxoplasma gondii",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                          topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trichomonas vaginalis.jpg",
+                                correct: "trichomonas vaginalis",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trichomonas_vaginalis.jpg",
+                                correct: "trichomonas vaginalis",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosoma haematobium.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosoma haematobium3.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/schimastosoma haematobium2.jpg",
+                                correct: "schimastosoma haematobium",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ],
+                         topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/fasciola hepatica.jpg",
+                                correct: "fasciola hepatica",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            ]
+
+
+
+
+
+
                         
                     }
                 ]
