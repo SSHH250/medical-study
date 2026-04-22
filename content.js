@@ -93,21 +93,60 @@ window.MEDICAL_CONTENT = {
                                 caseSensitive: false,
                                 explanation: " "
                             },
-                            { 
-                                type: "text-input", 
-                                text: "Какая функциональная группа содержится в фенолах?", 
-                                correct: "гидроксильная",
+                           { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/lamblia_intestinalis2.jpg",
+                                correct: "lamblia intestinalis",
                                 caseSensitive: false,
-                                explanation: "Фенолы содержат гидроксильную группу -OH, связанную с бензольным кольцом"
+                                explanation: " "
+                            },
+                           { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/lamblia intestinalis3.jpg",
+                                correct: "lamblia intestinalis",
+                                caseSensitive: false,
+                                explanation: " "
                             },
                             { 
-                                type: "choice", 
-                                text: "Какая формула у фенола?", 
-                                options: ["C₆H₅OH", "C₆H₆", "C₆H₅CH₃", "C₆H₄(OH)₂"], 
-                                correct: 0, 
-                                explanation: "Фенол — C₆H₅OH"
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/lamblia intestinalis4.jpg",
+                                correct: "lamblia intestinalis",
+                                caseSensitive: false,
+                                explanation: " "
                             }
+                        ],
+                            topic: " ",
+                        questions: [
+                            { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosoma brucei gambiense.jpg",
+                                correct: "trypanosoma brucei gambiense",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosoma brucei gambiense2.jpg",
+                                correct: "trypanosoma brucei gambiense",
+                                caseSensitive: false,
+                                explanation: " "
+                            },
+                             { 
+                                type: "image-text-input", 
+                                text: "Какой паразит на фото?", 
+                                image: "images/trypanosoma brucei gambiense.jpg",
+                                correct: "trypanosoma brucei gambiense3",
+                                caseSensitive: false,
+                                explanation: " "
+                            }
+                            
                         ]
+                        
                     }
                 ]
             }
