@@ -37,8 +37,47 @@ window.MEDICAL_CONTENT = {
             }
         ],
         tests: [
-             { 
+            { 
                 id: "test_chem_1", 
+                name: "Основы органической химии", 
+                points: 100,
+                numberOfQuestions: 3,
+                questionBanks: [
+                    {
+                        topic: "Алканы",
+                        questions: [
+                            { type: "choice", text: "Какая формула у метана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 0, explanation: "Метан — CH₄" },
+                            { type: "choice", text: "Какая формула у этана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 1, explanation: "Этан — C₂H₆" },
+                            { type: "choice", text: "Какая формула у пропана?", options: ["CH₄", "C₂H₆", "C₃H₈", "C₄H₁₀"], correct: 2, explanation: "Пропан — C₃H₈" }
+                        ]
+                    },
+                    {
+                        topic: "Индикаторы",
+                        questions: [
+                            { type: "choice", text: "Какой цвет у лакмуса в кислой среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 0, explanation: "Лакмус в кислой среде красный" },
+                            { type: "choice", text: "Какой цвет у лакмуса в щелочной среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 1, explanation: "Лакмус в щелочной среде синий" }
+                        ]
+                    }
+                ]
+            },
+            { 
+                id: "test_chem_2", 
+                name: "Химические реакции", 
+                points: 80,
+                numberOfQuestions: 3,
+                questionBanks: [
+                    {
+                        topic: "Типы реакций",
+                        questions: [
+                            { type: "choice", text: "Какой тип реакции: 2H₂ + O₂ → 2H₂O?", options: ["Соединение", "Разложение", "Замещение", "Обмен"], correct: 0, explanation: "Из простых веществ образуется сложное — реакция соединения" },
+                            { type: "choice", text: "Что такое эндотермическая реакция?", options: ["С поглощением тепла", "С выделением тепла", "Без изменения тепла", "Взрывная"], correct: 0, explanation: "Эндотермическая реакция идёт с поглощением тепла" },
+                            { type: "text-input", text: "Как называется реакция между кислотой и основанием?", correct: "нейтрализация", caseSensitive: false, explanation: "Кислота + основание = соль + вода" }
+                            ]
+                    }
+                ]
+            },
+            { 
+                id: "test_chem_3", 
                 name: "Фенолы и ароматические соединения", 
                 points: 120,
                 numberOfQuestions: 3,
@@ -72,10 +111,6 @@ window.MEDICAL_CONTENT = {
                     }
                 ]
             }
-               
-                   
-           
-           
         ],
         games: []
     },
