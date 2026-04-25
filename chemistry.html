@@ -611,7 +611,7 @@
                     } else {
                         testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
+        /* .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; } */
         }
                 } catch(err) {
                     testsHtml += '<div class="item" style="color:red;">❌ Ошибка загрузки: ' + escapeHtml(filePath) + '</div>';
