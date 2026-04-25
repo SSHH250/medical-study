@@ -7,7 +7,7 @@ window.MEDICAL_CONTENT = {
             { id: "chem_1", title: "Органическая химия", description: "Углеводороды", difficulty: "medium", isAvailable: true }
         ],
         testFiles: [
-            "tests/chemistry/test_chem_1.json"
+            "tests/chemistry/test_chem1.json"
         ],
         games: []
     },
