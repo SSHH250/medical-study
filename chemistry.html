@@ -85,6 +85,8 @@
         .confirm-buttons button { padding: 12px 28px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; min-width: 130px; }
         .confirm-cancel { background: #e2e3e5; color: #333; }
         .confirm-ok { background: #e53e3e; color: white; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
         .modal-content { background: white; margin: 3% auto; padding: 30px; width: 95%; max-width: 1000px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
         
         .leaderboard-row { display: grid; grid-template-columns: 60px 1fr 100px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
@@ -140,14 +142,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
         
-       const firebaseConfig = {
-  apiKey: "AIzaSyAIWARO5SJIbh296C1ynSMC0hLakhLhzko",
-  authDomain: "medical-study-new.firebaseapp.com",
-  projectId: "medical-study-new",
-  storageBucket: "medical-study-new.firebasestorage.app",
-  messagingSenderId: "647872749579",
-  appId: "1:647872749579:web:5278013762a53d5d12670e"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyB...",
+            authDomain: "medical-study.firebaseapp.com",
+            projectId: "medical-study",
+            storageBucket: "medical-study.firebasestorage.app",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456"
+        };
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -270,7 +272,6 @@
                     q = shuffleQuestionOptions(q);
                 }
                 if (q.type === 'multiple-choice') {
-                    // Перемешиваем варианты, но правильные индексы обновляем
                     const optsWithIdx = q.options.map((opt, idx) => ({ text: opt, orig: idx }));
                     const shuffledOpts = shuffleArray(optsWithIdx);
                     q.options = shuffledOpts.map(item => item.text);
@@ -278,7 +279,7 @@
                     for (let origIdx of q.correct) {
                         const newIdx = shuffledOpts.findIndex(item => item.orig === origIdx);
                         if (newIdx !== -1) newCorrect.push(newIdx);
-                    }
+                        }
                     q.correct = newCorrect;
                 }
                 result.push(q);
@@ -348,7 +349,7 @@
                 val = val.replace(/"/g, '&quot;');
                 html += '<input type="text" class="text-input" id="textAnswer" placeholder="Введите ваш ответ..." value="' + val + '">';
                 html += '<div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть ответ</button></div>';
-            } else if (q.type === 'image-choice') {
+                } else if (q.type === 'image-choice') {
                 if (q.image) {
                     html += '<div class="question-image"><img src="' + q.image + '" alt="Рисунок" onerror="this.src=\'https://via.placeholder.com/300x200?text=Изображение+не+загружено\'" style="max-width:100%; border-radius:10px; margin-bottom:20px;"></div>';
                 }
@@ -404,8 +405,7 @@
             }
             let pointsMsg = shouldAwardPoints ? '<div class="info-box">💰 За этот тест можно получить баллы! Вопросы и варианты ответов случайные.</div>' : '<div class="info-box">📖 Обучающий режим. Баллы не начисляются.</div>';
             let html = '<div class="test-wrapper">' + pointsMsg +
-                '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped +
-                '</span></span></div></div>' +
+                '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped + '</span></span></div></div>' +
                 '<div class="nav-buttons" id="questionsNav"></div></div>' +
                 '<div id="currentQuestionContainer"></div><div class="test-actions">';
             if (currentQIndex > 0) html += '<button class="prev-btn" onclick="prevQuestion()">← Предыдущий</button>';
@@ -610,9 +610,7 @@
                         testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
                     } else {
                         testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
-        
-        /* .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; } */
-        }
+                        }
                 } catch(err) {
                     testsHtml += '<div class="item" style="color:red;">❌ Ошибка загрузки: ' + escapeHtml(filePath) + '</div>';
                 }
