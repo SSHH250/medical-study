@@ -247,7 +247,29 @@ window.MEDICAL_CONTENT = {
         icon: "🔬",
         color: "#8B5CF6",
         topics: [],
-        tests: [],
+        tests: [ { 
+                id: "test_chem_1", 
+                name: "Основы органической химии", 
+                points: 100,
+                numberOfQuestions: 3,
+                questionBanks: [
+                    {
+                        topic: " ",
+                        questions: [
+                            { type: "text-input", text: "Мышечная ткань содержит актиновые и ... волокна?",correct: "миозиновые", caseSensitive: false},
+                            { type: "text-input", text: "Мышечная ткань содержит ... и миозиновые волокна?",correct: "актиновые", caseSensitive: false},
+                             { type: "text-input", text: "Мышечная ткань содержит 2 типа ... : актиновые и миозиновые? (Ответ дать в нужном падеже и числе)",correct: "миофиламентов", caseSensitive: false}
+                        ]
+                    },
+                    {
+                        topic: "Индикаторы",
+                        questions: [
+                            { type: "choice", text: "Какой цвет у лакмуса в кислой среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 0, explanation: "Лакмус в кислой среде красный" },
+                            { type: "choice", text: "Какой цвет у лакмуса в щелочной среде?", options: ["Красный", "Синий", "Фиолетовый", "Зелёный"], correct: 1, explanation: "Лакмус в щелочной среде синий" }
+                        ]
+                    }
+                ]
+            },],
         games: []
     }
 };
