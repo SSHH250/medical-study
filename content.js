@@ -269,7 +269,8 @@ window.MEDICAL_CONTENT = {
                         ]
                     }
                 ]
-            },],
+            }
+        ],
         games: []
     }
 };
