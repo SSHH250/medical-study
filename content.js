@@ -172,7 +172,7 @@ window.MEDICAL_CONTENT = {
                 { 
                     "type": "image-text-input", 
                     "text": "Какой паразит на фото?",
-                    "image": "images/fasciolahepatica.jpg",
+                    "image": "images/1000015316.png",
                     "correct": "fasciola hepatica",
                     "caseSensitive": false,
                     "explanation": "Fasciola hepatica — вызывает фасциолёз"
