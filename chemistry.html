@@ -46,6 +46,10 @@
         .option.selected { background: #667eea; color: white; }
         .text-input { width: 100%; padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; margin-top: 10px; }
         .text-input:focus { outline: none; border-color: #667eea; }
+        .multiple-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f7f7f7; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .multiple-option:hover { background: #e8e8e8; transform: translateX(5px); }
+        .multiple-option.selected { background: #667eea; color: white; }
+        .multiple-option input { width: 20px; height: 20px; cursor: pointer; margin-right: 10px; }
         
         .test-actions { display: flex; justify-content: center; gap: 20px; margin-top: 30px; margin-bottom: 20px; flex-wrap: wrap; }
         .test-actions button { padding: 14px 28px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s; min-height: 50px; min-width: 140px; }
@@ -81,8 +85,6 @@
         .confirm-buttons button { padding: 12px 28px; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; min-width: 130px; }
         .confirm-cancel { background: #e2e3e5; color: #333; }
         .confirm-ok { background: #e53e3e; color: white; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
         .modal-content { background: white; margin: 3% auto; padding: 30px; width: 95%; max-width: 1000px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
         
         .leaderboard-row { display: grid; grid-template-columns: 60px 1fr 100px; padding: 12px; border-bottom: 1px solid #eee; align-items: center; }
@@ -133,11 +135,11 @@
             <button class="first-time-button" id="firstTimeConfirmBtn">✅ Понятно, начинаю тест!</button>
         </div>
     </div>
-
     <script src="content.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        
        const firebaseConfig = {
   apiKey: "AIzaSyAIWARO5SJIbh296C1ynSMC0hLakhLhzko",
   authDomain: "medical-study-new.firebaseapp.com",
@@ -210,7 +212,7 @@
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     ratings.push({ userId: data.id, username: data.username, points: data.subjectPoints?.chemistry || 0 });
-                });
+                    });
                 ratings.sort((a, b) => b.points - a.points);
                 let html = '<div class="leaderboard-row leaderboard-header"><div>#</div><div>Игрок</div><div>Очки</div></div>';
                 if (ratings.length === 0) { html += '<div class="leaderboard-row">🏆 Пока нет участников</div>'; }
@@ -240,6 +242,7 @@
         // ========== ЛОГИКА ТЕСТА ==========
         let currentTest = null, currentQuestions = [], userAnswers = [], questionStatus = [], currentQIndex = 0, shouldAwardPoints = true;
         let pendingTestId = null, pendingAward = null;
+        let loadedTestsData = {};
         
         function shuffleArray(arr) { const a = [...arr]; for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
         
@@ -266,6 +269,18 @@
                 if (q.type === 'choice' || q.type === 'image-choice') {
                     q = shuffleQuestionOptions(q);
                 }
+                if (q.type === 'multiple-choice') {
+                    // Перемешиваем варианты, но правильные индексы обновляем
+                    const optsWithIdx = q.options.map((opt, idx) => ({ text: opt, orig: idx }));
+                    const shuffledOpts = shuffleArray(optsWithIdx);
+                    q.options = shuffledOpts.map(item => item.text);
+                    const newCorrect = [];
+                    for (let origIdx of q.correct) {
+                        const newIdx = shuffledOpts.findIndex(item => item.orig === origIdx);
+                        if (newIdx !== -1) newCorrect.push(newIdx);
+                    }
+                    q.correct = newCorrect;
+                }
                 result.push(q);
             }
             return result;
@@ -275,6 +290,16 @@
             if (q.type === 'text-input' || q.type === 'image-text-input') {
                 if (!ans || !q.correct) return false;
                 return String(ans).toLowerCase().trim() === String(q.correct).toLowerCase().trim();
+            }
+            if (q.type === 'multiple-choice') {
+                if (!Array.isArray(ans) || !Array.isArray(q.correct)) return false;
+                const userSet = new Set(ans);
+                const correctSet = new Set(q.correct);
+                if (userSet.size !== correctSet.size) return false;
+                for (let item of correctSet) {
+                    if (!userSet.has(item)) return false;
+                }
+                return true;
             }
             return ans === q.correct;
         }
@@ -333,6 +358,17 @@
                     html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
                 }
                 html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
+            } else if (q.type === 'multiple-choice') {
+                const selectedAnswers = userAnswers[currentQIndex] || [];
+                html += '<div class="options-list">';
+                for (let i = 0; i < q.options.length; i++) {
+                    const isSelected = selectedAnswers.includes(i);
+                    html += '<div class="multiple-option ' + (isSelected ? 'selected' : '') + '" onclick="toggleMultipleAnswer(' + i + ')">' +
+                                '<input type="checkbox" ' + (isSelected ? 'checked' : '') + '>' +
+                                '<span>' + escapeHtml(q.options[i]) + '</span>' +
+                            '</div>';
+                }
+                html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
             } else {
                 html += '<div class="options-list">';
                 for (let i = 0; i < q.options.length; i++) {
@@ -340,7 +376,7 @@
                     html += '<div class="option ' + (selected ? 'selected' : '') + '" onclick="selectAnswer(' + i + ')">' + escapeHtml(q.options[i]) + '</div>';
                 }
                 html += '</div><div style="margin-top:15px;"><button class="clear-btn" onclick="clearAnswer()">🗑️ Стереть выбор</button></div>';
-                }
+            }
             
             container.innerHTML = '<div class="question-card">' + html + '</div>';
             
@@ -368,7 +404,8 @@
             }
             let pointsMsg = shouldAwardPoints ? '<div class="info-box">💰 За этот тест можно получить баллы! Вопросы и варианты ответов случайные.</div>' : '<div class="info-box">📖 Обучающий режим. Баллы не начисляются.</div>';
             let html = '<div class="test-wrapper">' + pointsMsg +
-                '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped + '</span></span></div></div>' +
+                '<div class="nav-panel"><div class="nav-title"><span>📋 Навигация</span><div class="nav-stats"><span class="stat answered">✅ Отвечено: <span id="statAnswered">' + answered + '</span></span><span class="stat skipped">⏭️ Пропущено: <span id="statSkipped">' + skipped +
+                '</span></span></div></div>' +
                 '<div class="nav-buttons" id="questionsNav"></div></div>' +
                 '<div id="currentQuestionContainer"></div><div class="test-actions">';
             if (currentQIndex > 0) html += '<button class="prev-btn" onclick="prevQuestion()">← Предыдущий</button>';
@@ -388,6 +425,19 @@
                 questionStatus[currentQIndex] = 'skipped';
             }
             showConfirmModal();
+        }
+        
+        function toggleMultipleAnswer(idx) {
+            let current = userAnswers[currentQIndex] || [];
+            if (current.includes(idx)) {
+                current = current.filter(i => i !== idx);
+            } else {
+                current.push(idx);
+            }
+            userAnswers[currentQIndex] = current;
+            questionStatus[currentQIndex] = 'temp_answered';
+            renderCurrentQuestion();
+            updateNavPanel();
         }
         
         function clearAnswer() {
@@ -414,7 +464,7 @@
         function finishSubmit() {
             let correct = 0, answered = 0;
             for (let i = 0; i < currentQuestions.length; i++) {
-                if (questionStatus[i] === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '') {
+                if (questionStatus[i] === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '' && (Array.isArray(userAnswers[i]) ? userAnswers[i].length > 0 : true)) {
                     answered++;
                     if (isAnswerCorrect(currentQuestions[i], userAnswers[i])) {
                         correct++;
@@ -428,10 +478,13 @@
                 const q = currentQuestions[i];
                 const status = questionStatus[i];
                 let isCor = false, userTxt = '';
-                if (status === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '') {
+                if (status === 'answered' && userAnswers[i] !== null && userAnswers[i] !== '' && (Array.isArray(userAnswers[i]) ? userAnswers[i].length > 0 : true)) {
                     isCor = isAnswerCorrect(q, userAnswers[i]);
                     if (q.type === 'text-input' || q.type === 'image-text-input') {
                         userTxt = userAnswers[i];
+                    } else if (q.type === 'multiple-choice') {
+                        const selectedTexts = userAnswers[i].map(idx => q.options[idx]);
+                        userTxt = selectedTexts.join(', ');
                     } else {
                         userTxt = q.options[userAnswers[i]];
                     }
@@ -444,6 +497,9 @@
                 let corTxt = '';
                 if (q.type === 'text-input' || q.type === 'image-text-input') {
                     corTxt = q.correct;
+                } else if (q.type === 'multiple-choice') {
+                    const correctTexts = q.correct.map(idx => q.options[idx]);
+                    corTxt = correctTexts.join(', ');
                 } else {
                     corTxt = q.options[q.correct];
                 }
@@ -475,7 +531,7 @@
                 alert('✅ Получено ' + earned + ' очков!');
             } else if (!shouldAwardPoints) {
                 alert('📖 Спасибо за прохождение!');
-            } else {
+                } else {
                 alert('ℹ️ Вы уже получали баллы за этот тест ранее.');
             }
             document.getElementById('testModal').style.display = 'none';
@@ -535,14 +591,44 @@
             document.getElementById('firstTimeOverlay').style.display = 'flex';
         }
         
+        async function loadTestsList() {
+            const testsContainer = document.getElementById('testsList');
+            if (!subjectData.testFiles || subjectData.testFiles.length === 0) {
+                testsContainer.innerHTML = '<div class="item">Нет тестов</div>';
+                return;
+            }
+            testsContainer.innerHTML = '<div class="item">⏳ Загрузка тестов...</div>';
+            let testsHtml = '';
+            for (let filePath of subjectData.testFiles) {
+                try {
+                    const response = await fetch(filePath);
+                    if (!response.ok) throw new Error('Файл не найден');
+                    const test = await response.json();
+                    loadedTestsData[test.id] = test;
+                    const hp = hasPoints(test.id);
+                    if (!hp) {
+                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
+                    } else {
+                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto; }
+        }
+                } catch(err) {
+                    testsHtml += '<div class="item" style="color:red;">❌ Ошибка загрузки: ' + escapeHtml(filePath) + '</div>';
+                }
+            }
+            testsContainer.innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
+        }
+        
         async function startTest(testId, award) {
-            let testFile = null;
-            if (subjectData.testFiles) {
+            let testFile = loadedTestsData[testId];
+            if (!testFile && subjectData.testFiles) {
                 for (let filePath of subjectData.testFiles) {
                     try {
                         const response = await fetch(filePath);
                         if (response.ok) {
                             const test = await response.json();
+                            loadedTestsData[test.id] = test;
                             if (test.id === testId) {
                                 testFile = test;
                                 break;
@@ -550,15 +636,11 @@
                         }
                     } catch(e) {}
                 }
-            } else if (subjectData.tests) {
-                testFile = subjectData.tests.find(t => t.id === testId);
             }
-            
             if (!testFile) {
                 alert('Тест не найден');
                 return;
             }
-            
             currentTest = testFile;
             shouldAwardPoints = award;
             currentQuestions = generateQuestions(currentTest);
@@ -583,33 +665,7 @@
         window.closeResults = closeResults;
         window.showConfirmModal = showConfirmModal;
         window.finishSubmit = finishSubmit;
-        
-        // Отображение списка тестов
-        async function loadTestsList() {
-            const testsContainer = document.getElementById('testsList');
-            if (!subjectData.testFiles || subjectData.testFiles.length === 0) {
-                testsContainer.innerHTML = '<div class="item">Нет тестов</div>';
-                return;
-            }
-            testsContainer.innerHTML = '<div class="item">Загрузка тестов...</div>';
-            let testsHtml = '';
-            for (let filePath of subjectData.testFiles) {
-                try {
-                    const response = await fetch(filePath);
-                    if (!response.ok) throw new Error();
-                    const test = await response.json();
-                    const hp = hasPoints(test.id);
-                    if (!hp) {
-                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="points-badge">💰 Баллы ещё не получены</span></div></div><button class="btn-start" onclick="startTestWithConfirm(\'' + test.id + '\', true)">🎯 Пройти и получить баллы</button></div>';
-                    } else {
-                        testsHtml += '<div class="item"><div><strong>📝 ' + escapeHtml(test.name) + '</strong><div style="font-size:12px; color:#666;">' + (test.numberOfQuestions || test.questionBanks.length) + ' вопросов | Максимум: +' + test.points + ' очков<br><span class="completed-badge">✅ Баллы получены</span></div></div><button class="btn-start" onclick="startTest(\'' + test.id + '\', false)">📖 Пройти заново (без баллов)</button></div>';
-                    }
-                } catch(err) {
-                    testsHtml += '<div class="item" style="color:red;">❌ Ошибка загрузки: ' + escapeHtml(filePath) + '</div>';
-                }
-            }
-            testsContainer.innerHTML = testsHtml || '<div class="item">Нет тестов</div>';
-        }
+        window.toggleMultipleAnswer = toggleMultipleAnswer;
         
         if (subjectData && subjectData.testFiles) {
             loadTestsList();
@@ -638,4 +694,3 @@
     </script>
 </body>
 </html>
-        
