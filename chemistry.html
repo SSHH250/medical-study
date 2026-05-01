@@ -691,5 +691,246 @@
         document.getElementById('exitConfirmOk').onclick = exitTest;
         document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem('currentUser'); location.href = 'index.html'; };
     </script>
+    <!-- ========== НОВАЯ ИГРА: КОНСТРУКТОР ФОРМУЛ ========== -->
+<style>
+    .game-constructor {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 40px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .game-constructor h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+        border-left: 4px solid #667eea;
+        padding-left: 15px;
+    }
+    .construct-palette {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: #f7f9fc;
+        border-radius: 15px;
+    }
+    .group-piece {
+        background: white;
+        border: 2px solid #667eea;
+        border-radius: 40px;
+        padding: 10px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        cursor: grab;
+        user-select: none;
+        transition: 0.2s;
+        display: inline-block;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .group-piece:active {
+        cursor: grabbing;
+    }
+    .group-piece.dragging {
+        opacity: 0.5;
+    }
+    .construct-area {
+        background: #fff8e7;
+        border: 2px dashed #f59e0b;
+        border-radius: 20px;
+        padding: 20px;
+        min-height: 150px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        transition: 0.2s;
+    }
+    .construct-slot {
+        background: #fef3c7;
+        border-radius: 40px;
+        padding: 10px 20px;
+        min-width: 80px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #92400e;
+        border: 1px solid #f59e0b;
+        transition: 0.2s;
+    }
+    .construct-slot.drag-over {
+        background: #ffedd5;
+        border-color: #d97706;
+        transform: scale(1.02);
+    }
+    .game-message {
+        margin-top: 20px;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 12px;
+    }
+    .game-message.success {
+        background: #d4edda;
+        color: #155724;
+    }
+    .game-message.error {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .construct-controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    .construct-controls button {
+        padding: 8px 20px;
+        border: none;
+        border-radius: 40px;
+        background: #667eea;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+    .construct-controls button:hover {
+        background: #5a67d8;
+        transform: translateY(-2px);
+    }
+    .construct-controls button.reset-btn {
+        background: #e53e3e;
+    }
+    .construct-controls button.reset-btn:hover {
+        background: #c53030;
+    }
+    @media (max-width: 700px) {
+        .group-piece, .construct-slot { font-size: 14px; padding: 6px 12px; }
+    }
+</style>
+
+<div class="game-constructor" id="formulaConstructor">
+    <h3>🧩 Конструктор структурных формул</h3>
+    <p style="margin-bottom: 10px;"><strong>Задание:</strong> Соберите формулу <strong>глицина</strong> (аминоуксусной кислоты) — <code>NH₂–CH₂–COOH</code>. Перетащите фрагменты в нужном порядке (слева направо).</p>
+    
+    <div class="construct-palette" id="palette">
+        <div class="group-piece" draggable="true" data-fragment="NH₂">NH₂</div>
+        <div class="group-piece" draggable="true" data-fragment="CH₂">CH₂</div>
+        <div class="group-piece" draggable="true" data-fragment="COOH">COOH</div>
+        <div class="group-piece" draggable="true" data-fragment="OH">OH</div>
+        <div class="group-piece" draggable="true" data-fragment="CHO">CHO</div>
+        <div class="group-piece" draggable="true" data-fragment="SH">SH</div>
+        <div class="group-piece" draggable="true" data-fragment="C₆H₅">C₆H₅ (бензол)</div>
+    </div>
+
+    <div class="construct-area" id="constructArea">
+        <!-- Слоты будут создаваться динамически или заранее сделаем 3 пустых слота -->
+    </div>
+    <div class="construct-controls">
+        <button id="checkFormulaBtn">✅ Проверить</button>
+        <button id="resetFormulaBtn" class="reset-btn">🔄 Очистить</button>
+    </div>
+    <div id="gameMessage" class="game-message"></div>
+</div>
+
+<script>
+    (function() {
+        // Правильный порядок для глицина (целевая формула)
+        const targetSequence = ["NH₂", "CH₂", "COOH"];
+        
+        // Текущее состояние сборки: массив фрагментов (или null для пустых слотов)
+        let currentSlots = [null, null, null]; // три слота – порядок важен
+        
+        // Создаём DOM-слоты
+        const constructArea = document.getElementById('constructArea');
+        function renderSlots() {
+            constructArea.innerHTML = '';
+            for (let i = 0; i < currentSlots.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'construct-slot';
+                slot.textContent = currentSlots[i] ? currentSlots[i] : '⬚';
+                slot.setAttribute('data-slot-index', i);
+                // Разрешаем drop на слот
+                slot.setAttribute('draggable', 'false');
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    slot.classList.add('drag-over');
+                });
+                slot.addEventListener('dragleave', (e) => {
+                    slot.classList.remove('drag-over');
+                });
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    slot.classList.remove('drag-over');
+                    const fragment = e.dataTransfer.getData('text/plain');
+                    if (fragment) {
+                        const idx = parseInt(slot.getAttribute('data-slot-index'));
+                        // Проверяем, что слот пуст (можно перезаписывать, но для игры лучше заменять)
+                        // Разрешаем заменить существующий фрагмент
+                        currentSlots[idx] = fragment;
+                        renderSlots();
+                    }
+                });
+                constructArea.appendChild(slot);
+            }
+        }
+        
+        // Настройка перетаскивания для элементов палитры
+        function initDragAndDrop() {
+            const pieces = document.querySelectorAll('#palette .group-piece');
+            pieces.forEach(piece => {
+                piece.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', piece.getAttribute('data-fragment'));
+                    e.dataTransfer.effectAllowed = 'copy';
+                    piece.classList.add('dragging');
+                });
+                piece.addEventListener('dragend', (e) => {
+                    piece.classList.remove('dragging');
+                });
+            });
+        }
+        
+        // Сброс всех слотов
+        function resetGame() {
+            currentSlots = [null, null, null];
+            renderSlots();
+            document.getElementById('gameMessage').innerHTML = '';
+            document.getElementById('gameMessage').className = 'game-message';
+        }
+        
+        // Проверка правильности
+        function checkFormula() {
+            // Сравниваем текущие фрагменты с целевыми (учитываем порядок)
+            let correct = true;
+            for (let i = 0; i < targetSequence.length; i++) {
+                if (currentSlots[i] !== targetSequence[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+            const msgDiv = document.getElementById('gameMessage');
+            if (correct) {
+                msgDiv.innerHTML = '✅ Отлично! Вы правильно собрали формулу глицина: NH₂–CH₂–COOH.';
+                msgDiv.className = 'game-message success';
+                // Можно добавить маленькое поощрение (но без баллов)
+            } else {
+                let userFormula = currentSlots.map(s => s || '?').join('-');
+                msgDiv.innerHTML = ❌ Неправильно. Вы собрали: ${userFormula}. Нужно: NH₂–CH₂–COOH. Попробуйте ещё раз!;
+                msgDiv.className = 'game-message error';
+            }
+        }
+        
+        // Инициализация
+        renderSlots();
+        initDragAndDrop();
+        
+        // Кнопки
+        document.getElementById('checkFormulaBtn').addEventListener('click', checkFormula);
+        document.getElementById('resetFormulaBtn').addEventListener('click', resetGame);
+    })();
+</script>
+<!-- ========== КОНЕЦ ИГРЫ-КОНСТРУКТОРА ========== -->
 </body>
 </html>
