@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MedicalStudy - Конструктор формул</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .game-description {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 15px;
+        }
+        .construct-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f7f9fc;
+            border-radius: 20px;
+            justify-content: center;
+        }
+        .group-piece {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            cursor: grab;
+            user-select: none;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .group-piece:active { cursor: grabbing; }
+        .group-piece.dragging { opacity: 0.5; }
+        
+        /* Поле 5x5 */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            background: #fff8e7;
+            border: 3px solid #f59e0b;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .grid-cell {
+            background: #fef3c7;
+            border-radius: 16px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+            transition: 0.2s;
+            text-align: center;
+            padding: 5px;
+        }
+        .grid-cell.drag-over {
+            background: #ffedd5;
+            border-color: #d97706;
+            transform: scale(1.02);
+        }
+        .grid-cell.filled {
+            background: #c4e0fa;
+            border-color: #667eea;
+            color: #2c3e66;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .check-btn {
+            background: #48bb78;
+            color: white;
+        }
+        .reset-btn {
+            background: #e53e3e;
+            color: white;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 16px;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        @media (max-width: 700px) {
+            .game-grid { gap: 6px; padding: 12px; }
+            .grid-cell { font-size: 12px; }
+            .group-piece { font-size: 14px; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="main.html" class="back-link">← Назад к курсам</a>
+    <h1>🧩 Конструктор структурных формул</h1>
+    <div class="game-description">
+        <strong>Задание:</strong> Соберите формулу <strong>глицина</strong> (аминоуксусной кислоты) — <code>NH₂–CH₂–COOH</code>.<br>
+        Перетащите фрагменты из палитры на поле 5x5.<br>
+        ✅ <strong>Правило:</strong> формула будет засчитана, если на поле находятся <strong>только</strong> фрагменты <code>NH₂</code>, <code>CH₂</code> и <code>COOH</code> (каждый по одному разу).<br>
+        ❌ Лишние фрагменты (например, OH, CHO, SH, бензол) не допускаются.<br>
+        Порядок и расположение не важны — можно строить в любом месте поля.
+    </div>
+
+    <!-- Палитра фрагментов -->
+    <div class="construct-palette" id="palette">
+        <div class="group-piece" draggable="true" data-fragment="NH₂">NH₂</div>
+        <div class="group-piece" draggable="true" data-fragment="CH₂">CH₂</div>
+        <div class="group-piece" draggable="true" data-fragment="COOH">COOH</div>
+        <div class="group-piece" draggable="true" data-fragment="OH">OH</div>
+        <div class="group-piece" draggable="true" data-fragment="CHO">CHO</div>
+        <div class="group-piece" draggable="true" data-fragment="SH">SH</div>
+        <div class="group-piece" draggable="true" data-fragment="C₆H₅">C₆H₅ (бензол)</div>
+    </div>
+
+    <!-- Игровое поле 5x5 -->
+    <div class="game-grid" id="gameGrid"></div>
+
+    <div class="controls">
+        <button id="checkBtn" class="check-btn">✅ Проверить</button>
+        <button id="resetBtn" class="reset-btn">🔄 Очистить поле</button>
+    </div>
+    <div id="message" class="message"></div>
+</div>
+
+<script>
+    const GRID_SIZE = 5; // 5x5
+    let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
+    let currentDragFragment = null;
+
+    // Правильные фрагменты и их допустимое количество
+    const requiredFragments = { "NH₂": 1, "CH₂": 1, "COOH": 1 };
+    const allowedFragments = ["NH₂", "CH₂", "COOH"];
+
+    // Создание DOM-сетки
+    function renderGrid() {
+        const gridContainer = document.getElementById('gameGrid');
+        gridContainer.innerHTML = '';
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                if (gridData[i][j] !== null) {
+                    cell.textContent = gridData[i][j];
+                    cell.classList.add('filled');
+                } else {
+                    cell.textContent = '⬚';
+                }
+                cell.setAttribute('data-row', i);
+                cell.setAttribute('data-col', j);
+                // Drag & Drop
+                cell.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    cell.classList.add('drag-over');
+                });
+                cell.addEventListener('dragleave', () => {
+                    cell.classList.remove('drag-over');
+                });
+                cell.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    cell.classList.remove('drag-over');
+                    const fragment = e.dataTransfer.getData('text/plain');
+                    if (fragment) {
+                        const row = parseInt(cell.getAttribute('data-row'));
+                        const col = parseInt(cell.getAttribute('data-col'));
+                        // Замена: если ячейка уже занята, перезаписываем
+                        gridData[row][col] = fragment;
+                        renderGrid();
+                    }
+                });
+                gridContainer.appendChild(cell);
+            }
+        }
+    }
+
+    // Настройка перетаскивания из палитры
+    function initDragFromPalette() {
+        const pieces = document.querySelectorAll('#palette .group-piece');
+        pieces.forEach(piece => {
+            piece.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', piece.getAttribute('data-fragment'));
+                e.dataTransfer.effectAllowed = 'copy';
+                piece.classList.add('dragging');
+            });
+            piece.addEventListener('dragend', (e) => {
+                piece.classList.remove('dragging');
+            });
+        });
+    }
+
+    // Очистка всего поля
+    function resetGame() {
+        gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
+        renderGrid();
+        document.getElementById('message').innerHTML = '';
+        document.getElementById('message').className = 'message';
+    }
+
+    // Проверка правильности формулы
+    function checkFormula() {
+        // Считаем количество каждого фрагмента на поле
+        const count = {};
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                const val = gridData[i][j];
+                if (val !== null) {
+                    count[val] = (count[val] || 0) + 1;
+                }
+            }
+        }
+        // Условия:
+        // 1. Есть ровно по одному NH₂, CH₂, COOH
+        let hasRequired = true;
+        for (let frag of allowedFragments) {
+            if (count[frag] !== requiredFragments[frag]) {
+                hasRequired = false;
+                break;
+            }
+        }
+        // 2. Нет других фрагментов (лишних)
+        let hasExtra = false;
+        for (let frag in count) {
+            if (!allowedFragments.includes(frag)) {
+                hasExtra = true;
+                break;
+            }
+        }
+        const isCorrect = hasRequired && !hasExtra;
+        const msgDiv = document.getElementById('message');
+        if (isCorrect) {
+            msgDiv.innerHTML = '✅ Правильно! Вы собрали формулу глицина. Можете гордиться собой!';
+            msgDiv.className = 'message success';
+        } else {
+            let extraInfo = '';
+            if (!hasRequired) {
+                extraInfo = ' Не хватает или больше одного из фрагментов NH₂, CH₂, COOH.';
+            } else if (hasExtra) {
+                extraInfo = ' Есть лишние фрагменты (например, OH, CHO, SH, бензол). Уберите их.';
+            }
+            msgDiv.innerHTML = `❌ Неправильно. ${extraInfo} Нужно разместить ровно по одному фрагменту NH₂, CH₂ и COOH, и никаких других.`;
+            msgDiv.className = 'message error';
+        }
+    }
+
+    // Инициализация
+    renderGrid();
+    initDragFromPalette();
+    document.getElementById('checkBtn').addEventListener('click', checkFormula);
+    document.getElementById('resetBtn').addEventListener('click', resetGame);
+</script>
+</body>
+</html>
