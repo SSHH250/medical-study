@@ -910,7 +910,7 @@
                 msgDiv.className = 'game-message success';
             } else {
                 const userFormula = currentSlots.map(s => s || '?').join('-');
-                msgDiv.innerHTML = ❌ Неправильно. Вы собрали: ${userFormula}. Нужно: NH₂–CH₂–COOH. Попробуйте ещё раз!;
+                msgDiv.innerHTML = `❌ Неправильно. Вы собрали: ${userFormula}. Нужно: NH₂–CH₂–COOH. Попробуйте ещё раз!`;
                 msgDiv.className = 'game-message error';
             }
         }
