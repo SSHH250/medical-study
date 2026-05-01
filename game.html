@@ -254,19 +254,19 @@
     function isConnected(positions) {
         if (positions.length === 0) return true;
         // Создаём Set для быстрого доступа к координатам
-        const posSet = new Set(positions.map(p => ${p.row},${p.col}));
+        const posSet = new Set(positions.map(p => `${p.row},${p.col}`));
         // BFS/DFS для проверки связности
         const start = positions[0];
         const queue = [start];
         const visited = new Set();
-        visited.add(${start.row},${start.col});
+        visited.add(`${start.row},${start.col}`);
         const directions = [[-1,0],[1,0],[0,-1],[0,1]];
         while (queue.length) {
             const {row, col} = queue.shift();
             for (let [dr, dc] of directions) {
                 const nr = row + dr;
                 const nc = col + dc;
-                const key = ${nr},${nc};
+                const key =`${nr},${nc}`;
                 if (posSet.has(key) && !visited.has(key)) {
                     visited.add(key);
                     queue.push({row: nr, col: nc});
