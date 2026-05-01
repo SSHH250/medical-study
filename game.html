@@ -221,7 +221,7 @@
                     } else if (fragment && !allowedFragments.includes(fragment)) {
                         // Сообщаем, что этот фрагмент не пригодится для текущего задания
                         const msgDiv = document.getElementById('message');
-                        msgDiv.innerHTML = ❌ Фрагмент "${fragment}" не входит в состав аланина. Уберите лишние элементы.;
+                        msgDiv.innerHTML = `❌ Фрагмент "${fragment}" не входит в состав аланина. Уберите лишние элементы.`;
                         msgDiv.className = 'message error';
                         setTimeout(() => {
                             if (msgDiv.innerHTML.includes("лишние")) msgDiv.innerHTML = '';
