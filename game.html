@@ -153,10 +153,12 @@
     <h1>🧩 Конструктор структурных формул</h1>
     <div class="game-description">
         <strong>Задание:</strong> Соберите формулу <strong>аланина</strong> — <code>NH₂–CH(CH₃)–COOH</code>.<br>
-        Перетащите фрагменты из палитры на поле 5x5.<br>
-        ✅ <strong>Правило:</strong> формула будет засчитана, если на поле находятся <strong>только</strong> фрагменты <code>NH₂</code>, <code>CH</code>, <code>CH₃</code>, <code>COOH</code> (каждый по одному разу).<br>
-        ❌ Лишние фрагменты (например, OH, CHO, SH, бензол) не допускаются.<br>
-        Порядок и расположение не важны — метильная группа (CH₃) может находиться в любой клетке (это соответствует её положению «вверх» или «вниз»).
+        Перетащите фрагменты из палитры на поле 5x5.<br><br>
+        ✅ <strong>Правила:</strong><br>
+        • На поле должны быть ровно четыре фрагмента: <strong>NH₂</strong>, <strong>CH</strong>, <strong>CH₃</strong>, <strong>COOH</strong>.<br>
+        • Все фрагменты должны <strong>соседствовать друг с другом</strong> (по вертикали или горизонтали), образуя одну связную группу.<br>
+        • Лишние фрагменты (OH, CHO, SH, бензол) использовать нельзя.<br>
+        • Порядок соединения и геометрия (линия, угол, ответвление) могут быть любыми — главное, чтобы все четыре части были рядом.
     </div>
 
     <div class="construct-palette" id="palette">
@@ -182,11 +184,10 @@
 <script>
     const GRID_SIZE = 5;
     let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
-
-    // Требуемые фрагменты для аланина (каждый по одному)
-    const requiredFragments = { "NH₂": 1, "CH": 1, "CH₃": 1, "COOH": 1 };
-    const allowedFragments = Object.keys(requiredFragments);
-
+    
+    // Только эти четыре фрагмента считаются правильными.
+    const allowedFragments = ["NH₂", "CH", "CH₃", "COOH"];
+    
     function renderGrid() {
         const gridContainer = document.getElementById('gameGrid');
         gridContainer.innerHTML = '';
@@ -213,26 +214,21 @@
                     e.preventDefault();
                     cell.classList.remove('drag-over');
                     const fragment = e.dataTransfer.getData('text/plain');
-                    if (fragment && allowedFragments.includes(fragment)) {
+                    if (fragment) {
                         const row = parseInt(cell.getAttribute('data-row'));
                         const col = parseInt(cell.getAttribute('data-col'));
                         gridData[row][col] = fragment;
                         renderGrid();
-                    } else if (fragment && !allowedFragments.includes(fragment)) {
-                        // Сообщаем, что этот фрагмент не пригодится для текущего задания
-                        const msgDiv = document.getElementById('message');
-                        msgDiv.innerHTML = `❌ Фрагмент "${fragment}" не входит в состав аланина. Уберите лишние элементы.`;
-                        msgDiv.className = 'message error';
-                        setTimeout(() => {
-                            if (msgDiv.innerHTML.includes("лишние")) msgDiv.innerHTML = '';
-                        }, 2000);
+                        // Очистить сообщение, если пользователь что-то меняет
+                        document.getElementById('message').innerHTML = '';
+                        document.getElementById('message').className = 'message';
                     }
                 });
                 gridContainer.appendChild(cell);
             }
         }
     }
-
+    
     function initDragFromPalette() {
         const pieces = document.querySelectorAll('#palette .group-piece');
         pieces.forEach(piece => {
@@ -246,61 +242,91 @@
             });
         });
     }
-
+    
     function resetGame() {
         gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
         renderGrid();
         document.getElementById('message').innerHTML = '';
         document.getElementById('message').className = 'message';
     }
-
+    
+    // Проверка, что все занятые клетки образуют одну связную группу (4 соседствующие)
+    function isConnected(positions) {
+        if (positions.length === 0) return true;
+        // Создаём Set для быстрого доступа к координатам
+        const posSet = new Set(positions.map(p => ${p.row},${p.col}));
+        // BFS/DFS для проверки связности
+        const start = positions[0];
+        const queue = [start];
+        const visited = new Set();
+        visited.add(${start.row},${start.col});
+        const directions = [[-1,0],[1,0],[0,-1],[0,1]];
+        while (queue.length) {
+            const {row, col} = queue.shift();
+            for (let [dr, dc] of directions) {
+                const nr = row + dr;
+                const nc = col + dc;
+                const key = ${nr},${nc};
+                if (posSet.has(key) && !visited.has(key)) {
+                    visited.add(key);
+                    queue.push({row: nr, col: nc});
+                }
+            }
+        }
+        return visited.size === positions.length;
+    }
+    
     function checkFormula() {
-        const count = {};
+        // Собираем все занятые клетки и считаем количество фрагментов
+        let occupied = [];
+        let fragmentCount = {};
         for (let i = 0; i < GRID_SIZE; i++) {
             for (let j = 0; j < GRID_SIZE; j++) {
                 const val = gridData[i][j];
                 if (val !== null) {
-                    count[val] = (count[val] || 0) + 1;
+                    occupied.push({row: i, col: j});
+                    fragmentCount[val] = (fragmentCount[val] || 0) + 1;
                 }
             }
         }
-
-        // Проверяем наличие всех требуемых фрагментов ровно по одному
-        let hasRequired = true;
-        for (let frag of allowedFragments) {
-            if (count[frag] !== requiredFragments[frag]) {
-                hasRequired = false;
-                break;
-            }
+        
+        // 1) Должно быть занято ровно 4 клетки (ровно 4 фрагмента)
+        if (occupied.length !== 4) {
+            document.getElementById('message').innerHTML = '❌ Неправильно: должно быть ровно 4 фрагмента (NH₂, CH, CH₃, COOH).';
+            document.getElementById('message').className = 'message error';
+            return;
         }
-
-        // Проверяем, нет ли лишних фрагментов
-        let hasExtra = false;
-        for (let frag in count) {
+        
+        // 2) Все фрагменты должны входить в разрешённый список (NH₂, CH, CH₃, COOH) и не повторяться
+        let allowed = true;
+        for (let frag in fragmentCount) {
             if (!allowedFragments.includes(frag)) {
-                hasExtra = true;
+                allowed = false;
+                break;
+            }
+            if (fragmentCount[frag] !== 1) {
+                allowed = false;
                 break;
             }
         }
-
-        const isCorrect = hasRequired && !hasExtra;
-        const msgDiv = document.getElementById('message');
-
-        if (isCorrect) {
-            msgDiv.innerHTML = '✅ Правильно! Вы собрали формулу аланина. Метильная группа (CH₃) может быть где угодно – это имитирует её расположение в пространстве.';
-            msgDiv.className = 'message success';
-        } else {
-            let extraInfo = '';
-            if (!hasRequired) {
-                extraInfo = ' Должны быть ровно по одному фрагменту NH₂, CH, CH₃ и COOH.';
-            } else if (hasExtra) {
-                extraInfo = ' Есть лишние фрагменты (например, OH, CHO, SH, бензол). Уберите их.';
-            }
-            msgDiv.innerHTML = `❌ Неправильно.${extraInfo} Нужно разместить только NH₂, CH, CH₃ и COOH (каждый по одному).`;
-            msgDiv.className = 'message error';
+        if (!allowed) {
+            document.getElementById('message').innerHTML = '❌ Неправильно: используйте только NH₂, CH, CH₃, COOH, каждый по одному разу.';
+            document.getElementById('message').className = 'message error';
+            return;
         }
+        
+        // 3) Проверка связности (все четыре клетки должны быть соседними)
+        if (!isConnected(occupied)) {
+            document.getElementById('message').innerHTML = '❌ Неправильно: все части формулы должны стоять рядом (образовывать связную группу). Не оставляйте разрывов.';
+            document.getElementById('message').className = 'message error';
+            return;
+        }
+        
+        // Всё правильно
+        document.getElementById('message').innerHTML = '✅ Правильно! Вы собрали формулу аланина. Метильная группа (CH₃) может быть в любом месте, лишь бы все части были рядом.';
+        document.getElementById('message').className = 'message success';
     }
-
+    
     renderGrid();
     initDragFromPalette();
     document.getElementById('checkBtn').addEventListener('click', checkFormula);
