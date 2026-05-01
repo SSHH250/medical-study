@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MedicalStudy - Конструктор формул</title>
+    <title>MedicalStudy - Конструктор формул (аланин)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -31,9 +31,7 @@
             text-decoration: none;
             font-weight: bold;
         }
-        .back-link:hover {
-            text-decoration: underline;
-        }
+        .back-link:hover { text-decoration: underline; }
         .game-description {
             margin-bottom: 20px;
             padding: 15px;
@@ -66,7 +64,6 @@
         .group-piece:active { cursor: grabbing; }
         .group-piece.dragging { opacity: 0.5; }
         
-        /* Поле 5x5 */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -155,17 +152,17 @@
     <a href="main.html" class="back-link">← Назад к курсам</a>
     <h1>🧩 Конструктор структурных формул</h1>
     <div class="game-description">
-        <strong>Задание:</strong> Соберите формулу <strong>глицина</strong> (аминоуксусной кислоты) — <code>NH₂–CH₂–COOH</code>.<br>
+        <strong>Задание:</strong> Соберите формулу <strong>аланина</strong> — <code>NH₂–CH(CH₃)–COOH</code>.<br>
         Перетащите фрагменты из палитры на поле 5x5.<br>
-        ✅ <strong>Правило:</strong> формула будет засчитана, если на поле находятся <strong>только</strong> фрагменты <code>NH₂</code>, <code>CH₂</code> и <code>COOH</code> (каждый по одному разу).<br>
+        ✅ <strong>Правило:</strong> формула будет засчитана, если на поле находятся <strong>только</strong> фрагменты <code>NH₂</code>, <code>CH</code>, <code>CH₃</code>, <code>COOH</code> (каждый по одному разу).<br>
         ❌ Лишние фрагменты (например, OH, CHO, SH, бензол) не допускаются.<br>
-        Порядок и расположение не важны — можно строить в любом месте поля.
+        Порядок и расположение не важны — метильная группа (CH₃) может находиться в любой клетке (это соответствует её положению «вверх» или «вниз»).
     </div>
 
-    <!-- Палитра фрагментов -->
     <div class="construct-palette" id="palette">
         <div class="group-piece" draggable="true" data-fragment="NH₂">NH₂</div>
-        <div class="group-piece" draggable="true" data-fragment="CH₂">CH₂</div>
+        <div class="group-piece" draggable="true" data-fragment="CH">CH</div>
+        <div class="group-piece" draggable="true" data-fragment="CH₃">CH₃</div>
         <div class="group-piece" draggable="true" data-fragment="COOH">COOH</div>
         <div class="group-piece" draggable="true" data-fragment="OH">OH</div>
         <div class="group-piece" draggable="true" data-fragment="CHO">CHO</div>
@@ -173,7 +170,6 @@
         <div class="group-piece" draggable="true" data-fragment="C₆H₅">C₆H₅ (бензол)</div>
     </div>
 
-    <!-- Игровое поле 5x5 -->
     <div class="game-grid" id="gameGrid"></div>
 
     <div class="controls">
@@ -184,15 +180,13 @@
 </div>
 
 <script>
-    const GRID_SIZE = 5; // 5x5
+    const GRID_SIZE = 5;
     let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
-    let currentDragFragment = null;
 
-    // Правильные фрагменты и их допустимое количество
-    const requiredFragments = { "NH₂": 1, "CH₂": 1, "COOH": 1 };
-    const allowedFragments = ["NH₂", "CH₂", "COOH"];
+    // Требуемые фрагменты для аланина (каждый по одному)
+    const requiredFragments = { "NH₂": 1, "CH": 1, "CH₃": 1, "COOH": 1 };
+    const allowedFragments = Object.keys(requiredFragments);
 
-    // Создание DOM-сетки
     function renderGrid() {
         const gridContainer = document.getElementById('gameGrid');
         gridContainer.innerHTML = '';
@@ -208,7 +202,6 @@
                 }
                 cell.setAttribute('data-row', i);
                 cell.setAttribute('data-col', j);
-                // Drag & Drop
                 cell.addEventListener('dragover', (e) => {
                     e.preventDefault();
                     cell.classList.add('drag-over');
@@ -220,12 +213,19 @@
                     e.preventDefault();
                     cell.classList.remove('drag-over');
                     const fragment = e.dataTransfer.getData('text/plain');
-                    if (fragment) {
+                    if (fragment && allowedFragments.includes(fragment)) {
                         const row = parseInt(cell.getAttribute('data-row'));
                         const col = parseInt(cell.getAttribute('data-col'));
-                        // Замена: если ячейка уже занята, перезаписываем
                         gridData[row][col] = fragment;
                         renderGrid();
+                    } else if (fragment && !allowedFragments.includes(fragment)) {
+                        // Сообщаем, что этот фрагмент не пригодится для текущего задания
+                        const msgDiv = document.getElementById('message');
+                        msgDiv.innerHTML = ❌ Фрагмент "${fragment}" не входит в состав аланина. Уберите лишние элементы.;
+                        msgDiv.className = 'message error';
+                        setTimeout(() => {
+                            if (msgDiv.innerHTML.includes("лишние")) msgDiv.innerHTML = '';
+                        }, 2000);
                     }
                 });
                 gridContainer.appendChild(cell);
@@ -233,7 +233,6 @@
         }
     }
 
-    // Настройка перетаскивания из палитры
     function initDragFromPalette() {
         const pieces = document.querySelectorAll('#palette .group-piece');
         pieces.forEach(piece => {
@@ -248,7 +247,6 @@
         });
     }
 
-    // Очистка всего поля
     function resetGame() {
         gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
         renderGrid();
@@ -256,9 +254,7 @@
         document.getElementById('message').className = 'message';
     }
 
-    // Проверка правильности формулы
     function checkFormula() {
-        // Считаем количество каждого фрагмента на поле
         const count = {};
         for (let i = 0; i < GRID_SIZE; i++) {
             for (let j = 0; j < GRID_SIZE; j++) {
@@ -268,8 +264,8 @@
                 }
             }
         }
-        // Условия:
-        // 1. Есть ровно по одному NH₂, CH₂, COOH
+
+        // Проверяем наличие всех требуемых фрагментов ровно по одному
         let hasRequired = true;
         for (let frag of allowedFragments) {
             if (count[frag] !== requiredFragments[frag]) {
@@ -277,7 +273,8 @@
                 break;
             }
         }
-        // 2. Нет других фрагментов (лишних)
+
+        // Проверяем, нет ли лишних фрагментов
         let hasExtra = false;
         for (let frag in count) {
             if (!allowedFragments.includes(frag)) {
@@ -285,24 +282,25 @@
                 break;
             }
         }
+
         const isCorrect = hasRequired && !hasExtra;
         const msgDiv = document.getElementById('message');
+
         if (isCorrect) {
-            msgDiv.innerHTML = '✅ Правильно! Вы собрали формулу глицина. Можете гордиться собой!';
+            msgDiv.innerHTML = '✅ Правильно! Вы собрали формулу аланина. Метильная группа (CH₃) может быть где угодно – это имитирует её расположение в пространстве.';
             msgDiv.className = 'message success';
         } else {
             let extraInfo = '';
             if (!hasRequired) {
-                extraInfo = ' Не хватает или больше одного из фрагментов NH₂, CH₂, COOH.';
+                extraInfo = ' Должны быть ровно по одному фрагменту NH₂, CH, CH₃ и COOH.';
             } else if (hasExtra) {
                 extraInfo = ' Есть лишние фрагменты (например, OH, CHO, SH, бензол). Уберите их.';
             }
-            msgDiv.innerHTML = `❌ Неправильно. ${extraInfo} Нужно разместить ровно по одному фрагменту NH₂, CH₂ и COOH, и никаких других.`;
+            msgDiv.innerHTML = ❌ Неправильно.${extraInfo} Нужно разместить только NH₂, CH, CH₃ и COOH (каждый по одному).;
             msgDiv.className = 'message error';
         }
     }
 
-    // Инициализация
     renderGrid();
     initDragFromPalette();
     document.getElementById('checkBtn').addEventListener('click', checkFormula);
