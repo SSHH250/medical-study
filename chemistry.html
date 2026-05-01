@@ -691,7 +691,7 @@
         document.getElementById('exitConfirmOk').onclick = exitTest;
         document.getElementById('logoutBtn').onclick = function() { localStorage.removeItem('currentUser'); location.href = 'index.html'; };
     </script>
-    <!-- ========== НОВАЯ ИГРА: КОНСТРУКТОР ФОРМУЛ ========== -->
+ <!-- ========== НОВАЯ ИГРА: КОНСТРУКТОР ФОРМУЛ ========== -->
 <style>
     .game-constructor {
         background: white;
@@ -826,7 +826,7 @@
     </div>
 
     <div class="construct-area" id="constructArea">
-        <!-- Слоты будут создаваться динамически или заранее сделаем 3 пустых слота -->
+        <!-- Слоты будут создаваться динамически -->
     </div>
     <div class="construct-controls">
         <button id="checkFormulaBtn">✅ Проверить</button>
@@ -837,14 +837,14 @@
 
 <script>
     (function() {
-        // Правильный порядок для глицина (целевая формула)
+        // Правильный порядок для глицина
         const targetSequence = ["NH₂", "CH₂", "COOH"];
         
-        // Текущее состояние сборки: массив фрагментов (или null для пустых слотов)
-        let currentSlots = [null, null, null]; // три слота – порядок важен
+        // Текущее состояние сборки: массив фрагментов или null
+        let currentSlots = [null, null, null];
         
-        // Создаём DOM-слоты
         const constructArea = document.getElementById('constructArea');
+        
         function renderSlots() {
             constructArea.innerHTML = '';
             for (let i = 0; i < currentSlots.length; i++) {
@@ -852,7 +852,6 @@
                 slot.className = 'construct-slot';
                 slot.textContent = currentSlots[i] ? currentSlots[i] : '⬚';
                 slot.setAttribute('data-slot-index', i);
-                // Разрешаем drop на слот
                 slot.setAttribute('draggable', 'false');
                 slot.addEventListener('dragover', (e) => {
                     e.preventDefault();
@@ -867,8 +866,6 @@
                     const fragment = e.dataTransfer.getData('text/plain');
                     if (fragment) {
                         const idx = parseInt(slot.getAttribute('data-slot-index'));
-                        // Проверяем, что слот пуст (можно перезаписывать, но для игры лучше заменять)
-                        // Разрешаем заменить существующий фрагмент
                         currentSlots[idx] = fragment;
                         renderSlots();
                     }
@@ -877,7 +874,6 @@
             }
         }
         
-        // Настройка перетаскивания для элементов палитры
         function initDragAndDrop() {
             const pieces = document.querySelectorAll('#palette .group-piece');
             pieces.forEach(piece => {
@@ -892,17 +888,15 @@
             });
         }
         
-        // Сброс всех слотов
         function resetGame() {
             currentSlots = [null, null, null];
             renderSlots();
-            document.getElementById('gameMessage').innerHTML = '';
-            document.getElementById('gameMessage').className = 'game-message';
+            const msgDiv = document.getElementById('gameMessage');
+            msgDiv.innerHTML = '';
+            msgDiv.className = 'game-message';
         }
         
-        // Проверка правильности
         function checkFormula() {
-            // Сравниваем текущие фрагменты с целевыми (учитываем порядок)
             let correct = true;
             for (let i = 0; i < targetSequence.length; i++) {
                 if (currentSlots[i] !== targetSequence[i]) {
@@ -914,19 +908,16 @@
             if (correct) {
                 msgDiv.innerHTML = '✅ Отлично! Вы правильно собрали формулу глицина: NH₂–CH₂–COOH.';
                 msgDiv.className = 'game-message success';
-                // Можно добавить маленькое поощрение (но без баллов)
             } else {
-                let userFormula = currentSlots.map(s => s || '?').join('-');
+                const userFormula = currentSlots.map(s => s || '?').join('-');
                 msgDiv.innerHTML = ❌ Неправильно. Вы собрали: ${userFormula}. Нужно: NH₂–CH₂–COOH. Попробуйте ещё раз!;
                 msgDiv.className = 'game-message error';
             }
         }
         
-        // Инициализация
         renderSlots();
         initDragAndDrop();
         
-        // Кнопки
         document.getElementById('checkFormulaBtn').addEventListener('click', checkFormula);
         document.getElementById('resetFormulaBtn').addEventListener('click', resetGame);
     })();
