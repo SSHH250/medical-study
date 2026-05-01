@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>MedicalStudy - Конструктор формул</title>
     <style>
-        /* Стили как в предыдущей версии (оставлены такими же) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,6 +29,60 @@
             font-weight: bold;
         }
         .back-link:hover { text-decoration: underline; }
+        
+        /* Режимы */
+        .mode-selector {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 40px;
+            background: #ddd;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .game-status {
+            background: #eef2ff;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .score-box {
+            background: gold;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .next-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .next-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
         .game-description {
             margin-bottom: 20px;
             padding: 15px;
@@ -120,7 +173,7 @@
             text-align: center;
             font-weight: bold;
             border-radius: 16px;
-            }
+        }
         .message.success { background: #d4edda; color: #155724; }
         .message.error { background: #f8d7da; color: #721c24; }
         .molecule-selector {
@@ -154,25 +207,39 @@
     <a href="main.html" class="back-link">← Назад к курсам</a>
     <h1>🧩 Конструктор структурных формул</h1>
 
-    <div class="molecule-selector">
+    <!-- Переключатель режимов -->
+    <div class="mode-selector">
+        <span style="font-weight: bold;">Режим:</span>
+        <button id="trainModeBtn" class="mode-btn active">Тренировка</button>
+        <button id="gameModeBtn" class="mode-btn">Игра (тест)</button>
+        <div id="gameSettings" style="display: none; margin-left: auto;">
+            <label>Количество заданий: </label>
+            <input type="number" id="tasksCount" min="1" max="10" value="3" style="width: 70px; padding: 5px; border-radius: 20px; border: 1px solid #667eea;">
+        </div>
+    </div>
+
+    <!-- Статус игры (отображается только в игровом режиме) -->
+    <div id="gameStatus" class="game-status" style="display: none;">
+        <span>Задание <span id="currentTaskIdx">1</span> из <span id="totalTasks">3</span></span>
+        <span class="score-box">⭐ Счёт: <span id="scoreCount">0</span></span>
+        <button id="nextTaskBtn" class="next-btn" disabled>Следующее вещество →</button>
+    </div>
+
+    <!-- Выбор вещества (только в тренировочном режиме) -->
+    <div id="moleculeSelectorDiv" class="molecule-selector">
         <label>Вещество:</label>
         <select id="moleculeSelect">
             <option value="alanine">Аланин (NH₂–CH(CH₃)–COOH)</option>
             <option value="glycine">Глицин (NH₂–CH₂–COOH)</option>
         </select>
-        <span id="moleculeHint" style="color:#667eea; font-size:14px;"></span>
     </div>
 
     <div class="game-description" id="gameDescription">
-        <!-- описание будет меняться в зависимости от выбранного вещества -->
+        <!-- описание будет меняться -->
     </div>
 
-    <div class="construct-palette" id="palette">
-        <!-- палитра будет заполнена динамически -->
-    </div>
-
+    <div class="construct-palette" id="palette"></div>
     <div class="game-grid" id="gameGrid"></div>
-
     <div class="controls">
         <button id="checkBtn" class="check-btn">✅ Проверить</button>
         <button id="resetBtn" class="reset-btn">🔄 Очистить поле</button>
@@ -189,13 +256,12 @@
             requiredFragments: { "NH₂": 1, "CH": 1, "CH₃": 1, "COOH": 1 },
             allowedFragments: ["NH₂", "CH", "CH₃", "COOH"],
             bonds: {
-                // Какие связи разрешены (двунаправленные)
                 "NH₂": ["CH"],
                 "CH": ["NH₂", "COOH", "CH₃"],
                 "COOH": ["CH"],
                 "CH₃": ["CH"]
             },
-            description: "Центральный атом (CH) связан с NH₂, COOH и CH₃. Метильная группа может быть в любом месте, но только прикреплена к CH."
+            description: "Центральный атом (CH) связан с NH₂, COOH и CH₃."
         },
         glycine: {
             name: "Глицин",
@@ -207,47 +273,45 @@
                 "CH₂": ["NH₂", "COOH"],
                 "COOH": ["CH₂"]
             },
-            description: "Цепочка из трёх фрагментов: NH₂–CH₂–COOH, они должны быть соединены последовательно."
+            description: "Цепочка из трёх фрагментов: NH₂–CH₂–COOH."
         }
     };
+    // Список всех возможных веществ для игры
+    const ALL_MOLECULE_IDS = ["alanine", "glycine"];
 
-    let currentMolecule = "alanine"; // текущее выбранное вещество
+    // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+    let currentMode = "train"; // "train" или "game"
+    let currentMolecule = "alanine";
     let config = MOLECULES[currentMolecule];
+    let gameTasks = []; // массив ID веществ для игрового режима
+    let currentTaskIndex = 0;
+    let gameScore = 0;
+    let gameActive = false; // активно ли текущее задание (ожидаем проверки)
+    let nextTaskEnabled = false; // можно ли перейти к следующему (после правильного ответа)
 
     const GRID_SIZE = 5;
     let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
 
-    // Обновление палитры и описания в зависимости от выбранного вещества
-    function updateUI() {
-        config = MOLECULES[currentMolecule];
-        // Обновляем описание
-        document.getElementById('gameDescription').innerHTML = `
-            <strong>Задание:</strong> Соберите формулу <strong>${config.name}</strong> — <code>${config.formula}</code>.<br>
-            Перетащите фрагменты из палитры на поле 5x5.<br><br>
-            ✅ <strong>Правила:</strong><br>
-            • Используйте только фрагменты: ${config.allowedFragments.join(', ')} (каждый по одному разу).<br>
-            • Все фрагменты должны быть соединены по правильным химическим связям (например, для аланина центральный CH связан с NH₂, COOH и CH₃).<br>
-            • Все части должны образовывать одну связную группу (без разрывов).<br>
-            • ${config.description}
-        `;
-        // Обновляем палитру: показываем все возможные фрагменты (включая лишние, но они будут отвергнуты)
-        const paletteDiv = document.getElementById('palette');
-        const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
-        // Отфильтруем, чтобы не дублировать, но для выбранного вещества полезно показать и лишние (они будут вызывать ошибку)
-        paletteDiv.innerHTML = '';
-        allFragments.forEach(frag => {
-            const piece = document.createElement('div');
-            piece.className = 'group-piece';
-            piece.setAttribute('draggable', 'true');
-            piece.setAttribute('data-fragment', frag);
-            piece.textContent = frag === 'C₆H₅' ? 'C₆H₅ (бензол)' : frag;
-            paletteDiv.appendChild(piece);
-        });
-        initDragFromPalette();
-        resetGame();
+    // DOM элементы
+    const trainModeBtn = document.getElementById('trainModeBtn');
+    const gameModeBtn = document.getElementById('gameModeBtn');
+    const gameStatusDiv = document.getElementById('gameStatus');
+    const moleculeSelectorDiv = document.getElementById('moleculeSelectorDiv');
+    const moleculeSelect = document.getElementById('moleculeSelect');
+    const tasksCountInput = document.getElementById('tasksCount');
+    const currentTaskIdxSpan = document.getElementById('currentTaskIdx');
+    const totalTasksSpan = document.getElementById('totalTasks');
+    const scoreCountSpan = document.getElementById('scoreCount');
+    const nextTaskBtn = document.getElementById('nextTaskBtn');
+
+    // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+    function resetGameField() {
+        gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
+        renderGrid();
+        document.getElementById('message').innerHTML = '';
+        document.getElementById('message').className = 'message';
     }
 
-    // Рендер сетки
     function renderGrid() {
         const gridContainer = document.getElementById('gameGrid');
         gridContainer.innerHTML = '';
@@ -279,8 +343,9 @@
                         const col = parseInt(cell.getAttribute('data-col'));
                         gridData[row][col] = fragment;
                         renderGrid();
-                        document.getElementById('message').innerHTML = '';
-                        document.getElementById('message').className = 'message';
+                        const msgDiv = document.getElementById('message');
+                        msgDiv.innerHTML = '';
+                        msgDiv.className = 'message';
                     }
                 });
                 gridContainer.appendChild(cell);
@@ -302,13 +367,32 @@
         });
     }
 
-    function resetGame() {
-        gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
-        renderGrid();
-        document.getElementById('message').innerHTML = '';
-        document.getElementById('message').className = 'message';
+    // Обновление палитры и описания для текущего вещества
+    function updateUIForCurrentMolecule() {
+        config = MOLECULES[currentMolecule];
+        document.getElementById('gameDescription').innerHTML = `
+            <strong>Задание:</strong> Соберите формулу <strong>${config.name}</strong> — <code>${config.formula}</code>.<br>
+            Используйте только фрагменты: ${config.allowedFragments.join(', ')} (каждый по одному разу).<br>
+            Все фрагменты должны быть соединены правильно и образовывать связную группу.<br>
+            ${config.description}
+        `;
+        // Обновляем палитру: показываем все возможные фрагменты (включая лишние)
+        const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
+        const paletteDiv = document.getElementById('palette');
+        paletteDiv.innerHTML = '';
+        allFragments.forEach(frag => {
+            const piece = document.createElement('div');
+            piece.className = 'group-piece';
+            piece.setAttribute('draggable', 'true');
+            piece.setAttribute('data-fragment', frag);
+            piece.textContent = frag === 'C₆H₅' ? 'C₆H₅ (бензол)' : frag;
+            paletteDiv.appendChild(piece);
+        });
+        initDragFromPalette();
+        resetGameField();
     }
-    // Проверка связности (BFS)
+
+    // ========== ПРОВЕРКА ПРАВИЛЬНОСТИ (общая логика) ==========
     function isConnected(positions) {
         if (positions.length === 0) return true;
         const posSet = new Set(positions.map(p => `${p.row},${p.col}`));
@@ -332,11 +416,10 @@
         return visited.size === positions.length;
     }
 
-    // Проверка правильности связей по графу
-    function checkBonds(occupied, fragmentMap) {
-        // occupied: массив объектов {row, col, frag}
-        // fragmentMap: Map от координаты к фрагменту
-        // Собираем все рёбра (связи) между соседними фрагментами
+    function checkBonds(occupied, fragmentMap, moleculeId) {
+        const molConfig = MOLECULES[moleculeId];
+        const bondsConfig = molConfig.bonds;
+        // Собираем рёбра между соседями
         const edges = [];
         const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
         for (let i = 0; i < occupied.length; i++) {
@@ -345,50 +428,36 @@
                 const b = occupied[j];
                 const dist = Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
                 if (dist === 1) {
-                    // связь между a.frag и b.frag
                     edges.push([a.frag, b.frag]);
                 }
             }
         }
-        // Проверяем каждую связь по правилам
-        const bondsConfig = config.bonds;
+        // Проверяем каждую связь
         for (let [f1, f2] of edges) {
-            // связь должна быть разрешена в конфигурации (в обе стороны)
             const ok = (bondsConfig[f1] && bondsConfig[f1].includes(f2)) ||
                        (bondsConfig[f2] && bondsConfig[f2].includes(f1));
             if (!ok) return false;
         }
-        // Также нужно проверить, что количество связей для каждого фрагмента соответствует ожидаемому
-        // (например, CH должен иметь 3 связи, NH₂ — 1 и т.д.) – это можно вывести из bondsConfig,
-        // но для простоты проверим, что степени вершин соответствуют ожидаемым из bondsConfig (не лишние связи)
-        // Подсчитаем степени
+        // Проверяем степени (только для ключевых фрагментов, необязательно)
         const degree = {};
         for (let [f1, f2] of edges) {
             degree[f1] = (degree[f1] || 0) + 1;
             degree[f2] = (degree[f2] || 0) + 1;
         }
-        // Ожидаемые степени: для аланина: CH:3, остальные:1; для глицина: CH₂:2, NH₂:1, COOH:1
-        // Вычислим из bondsConfig (идеально, но можно прописать явно)
-        // Здесь упростим: проверим, что нет изолированных фрагментов (все должны быть связаны) – уже проверено связностью.
-        // Дополнительно: в аланине CH имел степень 3, если степень меньше – ошибка.
-        const expectedDegrees = {};
-        if (currentMolecule === 'alanine') {
-            expectedDegrees['CH'] = 3;
-            expectedDegrees['NH₂'] = 1;
-            expectedDegrees['COOH'] = 1;
-            expectedDegrees['CH₃'] = 1;
-        } else if (currentMolecule === 'glycine') {
-            expectedDegrees['CH₂'] = 2;
-            expectedDegrees['NH₂'] = 1;
-            expectedDegrees['COOH'] = 1;
-        }
-        for (let frag in expectedDegrees) {
-            if ((degree[frag] || 0) !== expectedDegrees[frag]) return false;
+        if (moleculeId === 'alanine') {
+            if ((degree['CH'] || 0) !== 3) return false;
+            if ((degree['NH₂'] || 0) !== 1) return false;
+            if ((degree['COOH'] || 0) !== 1) return false;
+            if ((degree['CH₃'] || 0) !== 1) return false;
+        } else if (moleculeId === 'glycine') {
+            if ((degree['CH₂'] || 0) !== 2) return false;
+            if ((degree['NH₂'] || 0) !== 1) return false;
+            if ((degree['COOH'] || 0) !== 1) return false;
         }
         return true;
     }
 
-    function checkFormula() {
+    function checkCurrentFormula() {
         // Собираем занятые клетки
         let occupied = [];
         let fragmentCount = {};
@@ -401,58 +470,170 @@
                 }
             }
         }
-        const totalCells = occupied.length;
         const requiredCount = Object.keys(config.requiredFragments).length;
-        if (totalCells !== requiredCount) {
-            document.getElementById('message').innerHTML = `❌ Неправильно: нужно ровно ${requiredCount} фрагментов (${config.allowedFragments.join(', ')}).`;
-            document.getElementById('message').className = 'message error';
-            return;
+        if (occupied.length !== requiredCount) {
+            showMessage(`Нужно ровно ${requiredCount} фрагментов (${config.allowedFragments.join(', ')}).`, false);
+            return false;
         }
-
-        // Проверка, что все фрагменты – из разрешённых и каждый ровно один
         for (let frag in fragmentCount) {
             if (!config.allowedFragments.includes(frag)) {
-                document.getElementById('message').innerHTML = `❌ Неправильно: фрагмент "${frag}" не входит в состав ${config.name}. Используйте только ${config.allowedFragments.join(', ')}.`;
-                document.getElementById('message').className = 'message error';
-                return;
+                showMessage(`Фрагмент "${frag}" не входит в состав ${config.name}. Используйте только ${config.allowedFragments.join(', ')}.`, false);
+                return false;
             }
             if (fragmentCount[frag] !== config.requiredFragments[frag]) {
-                document.getElementById('message').innerHTML = `❌ Неправильно: каждого фрагмента должно быть ровно по одному.`;
-                document.getElementById('message').className = 'message error';
-                return;
+                showMessage(`Каждого фрагмента должно быть ровно по одному.`, false);
+                return false;
             }
         }
-
-        // Проверка связности
         const positions = occupied.map(p => ({row: p.row, col: p.col}));
         if (!isConnected(positions)) {
-            document.getElementById('message').innerHTML = '❌ Неправильно: все фрагменты должны быть соединены в одну группу (без разрывов).';
-            document.getElementById('message').className = 'message error';
-            return;
+            showMessage(`Все фрагменты должны быть соединены в одну группу (без разрывов).`, false);
+            return false;
         }
-
-        // Проверка правильности химических связей
-        if (!checkBonds(occupied, new Map(occupied.map(p => [`${p.row},${p.col}`, p.frag])))) {
-            document.getElementById('message').innerHTML = `❌ Неправильно: связи между фрагментами не соответствуют структуре ${config.name}. Проверьте, что фрагменты соединены правильно (например, центральный атом CH должен быть связан с NH₂, COOH и CH₃).`;
-            document.getElementById('message').className = 'message error';
-            return;
+        if (!checkBonds(occupied, null, currentMolecule)) {
+            showMessage(`Связи между фрагментами не соответствуют структуре ${config.name}. Проверьте правильность соединений.`, false);
+            return false;
         }
-
-        // Всё правильно
-        document.getElementById('message').innerHTML = `✅ Правильно! Вы собрали формулу ${config.name}. Отличная работа!`;
-        document.getElementById('message').className = 'message success';
+        showMessage(`✅ Правильно! Вы собрали формулу ${config.name}.`, true);
+        return true;
     }
 
-    // Обработка выбора вещества
-    document.getElementById('moleculeSelect').addEventListener('change', (e) => {
-        currentMolecule = e.target.value;
-        updateUI();
+    function showMessage(msg, isSuccess) {
+        const msgDiv = document.getElementById('message');
+        msgDiv.innerHTML = msg;
+        msgDiv.className = isSuccess ? 'message success' : 'message error';
+    }
+
+    // ========== ИГРОВОЙ РЕЖИМ ==========
+    function initGameMode() {
+        const tasksCount = parseInt(tasksCountInput.value) || 3;
+        // Перемешиваем список веществ и берём первых tasksCount
+        const shuffled = [...ALL_MOLECULE_IDS];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        gameTasks = shuffled.slice(0, tasksCount);
+        currentTaskIndex = 0;
+        gameScore = 0;
+        gameActive = true;
+        nextTaskEnabled = false;
+        scoreCountSpan.textContent = gameScore;
+        totalTasksSpan.textContent = gameTasks.length;
+        currentTaskIdxSpan.textContent = currentTaskIndex + 1;
+        nextTaskBtn.disabled = true;
+        loadTask(gameTasks[currentTaskIndex]);
+    }
+
+    function loadTask(moleculeId) {
+        currentMolecule = moleculeId;
+        config = MOLECULES[currentMolecule];
+        // Обновляем описание (без выбора вещества)
+        document.getElementById('gameDescription').innerHTML = `
+            <strong>Задание:</strong> Соберите формулу <strong>${config.name}</strong> — <code>${config.formula}</code>.<br>
+            Используйте только фрагменты: ${config.allowedFragments.join(', ')} (каждый по одному разу).<br>
+            Все фрагменты должны быть соединены правильно и образовывать связную группу.
+        `;
+        // Обновляем палитру
+        const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
+        const paletteDiv = document.getElementById('palette');
+        paletteDiv.innerHTML = '';
+        allFragments.forEach(frag => {
+            const piece = document.createElement('div');
+            piece.className = 'group-piece';
+            piece.setAttribute('draggable', 'true');
+            piece.setAttribute('data-fragment', frag);
+            piece.textContent = frag === 'C₆H₅' ? 'C₆H₅ (бензол)' : frag;
+            paletteDiv.appendChild(piece);
+        });
+        initDragFromPalette();
+        resetGameField();
+        nextTaskBtn.disabled = true;
+        gameActive = true;
+    }
+
+    function onGameCorrect() {
+        gameScore++;
+        scoreCountSpan.textContent = gameScore;
+        nextTaskBtn.disabled = false;
+        showMessage(`✅ Правильно! +1 балл. Нажмите "Следующее вещество".`, true);
+        gameActive = false;
+    }
+
+    function nextTask() {
+        if (currentTaskIndex + 1 < gameTasks.length) {
+            currentTaskIndex++;
+            currentTaskIdxSpan.textContent = currentTaskIndex + 1;
+            loadTask(gameTasks[currentTaskIndex]);
+        } else {
+            // Игра окончена
+            gameStatusDiv.style.display = 'none';
+            currentMode = 'train';
+            trainModeBtn.classList.add('active');
+            gameModeBtn.classList.remove('active');
+            moleculeSelectorDiv.style.display = 'flex';
+            document.getElementById('gameDescription').innerHTML =` <strong>🎉 Игра завершена! Ваш результат: ${gameScore} из ${gameTasks.length}.</strong><br>Выберите режим тренировки или начните новую игру.`;
+            showMessage(`🏆 Игра окончена! Вы набрали ${gameScore} / ${gameTasks.length}.`, true);
+            // Сброс поля и очистка
+            resetGameField();
+        }
+    }
+
+    // ========== ОБРАБОТЧИКИ ==========
+    function switchMode(mode) {
+        currentMode = mode;
+        if (mode === 'train') {
+            gameStatusDiv.style.display = 'none';
+            moleculeSelectorDiv.style.display = 'flex';
+            currentMolecule = moleculeSelect.value;
+            config = MOLECULES[currentMolecule];
+            updateUIForCurrentMolecule();
+            trainModeBtn.classList.add('active');
+            gameModeBtn.classList.remove('active');
+        } else {
+            gameStatusDiv.style.display = 'flex';
+            moleculeSelectorDiv.style.display = 'none';
+            trainModeBtn.classList.remove('active');
+            gameModeBtn.classList.add('active');
+            initGameMode();
+        }
+    }
+    // Кнопка проверки
+    document.getElementById('checkBtn').addEventListener('click', () => {
+        if (currentMode === 'train') {
+            checkCurrentFormula();
+        } else if (currentMode === 'game' && gameActive) {
+            const correct = checkCurrentFormula();
+            if (correct) {
+                onGameCorrect();
+            } else {
+                // остаёмся на том же задании
+            }
+        }
     });
 
-    // Инициализация
-    updateUI();
-    document.getElementById('checkBtn').addEventListener('click', checkFormula);
-    document.getElementById('resetBtn').addEventListener('click', resetGame);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        resetGameField();
+    });
+
+    nextTaskBtn.addEventListener('click', () => {
+        if (currentMode === 'game' && !nextTaskBtn.disabled) {
+            nextTask();
+        }
+    });
+
+    trainModeBtn.addEventListener('click', () => switchMode('train'));
+    gameModeBtn.addEventListener('click', () => switchMode('game'));
+
+    moleculeSelect.addEventListener('change', (e) => {
+        if (currentMode === 'train') {
+            currentMolecule = e.target.value;
+            updateUIForCurrentMolecule();
+        }
+    });
+
+    // Инициализация (тренировочный режим по умолчанию)
+    updateUIForCurrentMolecule();
 </script>
 </body>
 </html>
