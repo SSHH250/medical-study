@@ -296,7 +296,7 @@
             } else if (hasExtra) {
                 extraInfo = ' Есть лишние фрагменты (например, OH, CHO, SH, бензол). Уберите их.';
             }
-            msgDiv.innerHTML = ❌ Неправильно.${extraInfo} Нужно разместить только NH₂, CH, CH₃ и COOH (каждый по одному).;
+            msgDiv.innerHTML = `❌ Неправильно.${extraInfo} Нужно разместить только NH₂, CH, CH₃ и COOH (каждый по одному).`;
             msgDiv.className = 'message error';
         }
     }
