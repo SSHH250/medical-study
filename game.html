@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>MedicalStudy - Конструктор формул (аланин)</title>
+    <title>MedicalStudy - Конструктор формул</title>
     <style>
+        /* Стили как в предыдущей версии (оставлены такими же) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,10 +21,7 @@
             padding: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
+        h1 { color: #667eea; margin-bottom: 10px; }
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
@@ -63,7 +61,6 @@
         }
         .group-piece:active { cursor: grabbing; }
         .group-piece.dragging { opacity: 0.5; }
-        
         .game-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -114,31 +111,36 @@
             transition: 0.2s;
             font-weight: bold;
         }
-        .check-btn {
-            background: #48bb78;
-            color: white;
-        }
-        .reset-btn {
-            background: #e53e3e;
-            color: white;
-        }
-        button:hover {
-            transform: translateY(-2px);
-        }
+        .check-btn { background: #48bb78; color: white; }
+        .reset-btn { background: #e53e3e; color: white; }
+        button:hover { transform: translateY(-2px); }
         .message {
             margin-top: 20px;
             padding: 12px;
             text-align: center;
             font-weight: bold;
             border-radius: 16px;
+            }
+        .message.success { background: #d4edda; color: #155724; }
+        .message.error { background: #f8d7da; color: #721c24; }
+        .molecule-selector {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #eef2ff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-        }
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
+        .molecule-selector label { font-weight: bold; }
+        select {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid #667eea;
+            background: white;
+            font-size: 16px;
+            cursor: pointer;
         }
         @media (max-width: 700px) {
             .game-grid { gap: 6px; padding: 12px; }
@@ -151,25 +153,22 @@
 <div class="container">
     <a href="main.html" class="back-link">← Назад к курсам</a>
     <h1>🧩 Конструктор структурных формул</h1>
-    <div class="game-description">
-        <strong>Задание:</strong> Соберите формулу <strong>аланина</strong> — <code>NH₂–CH(CH₃)–COOH</code>.<br>
-        Перетащите фрагменты из палитры на поле 5x5.<br><br>
-        ✅ <strong>Правила:</strong><br>
-        • На поле должны быть ровно четыре фрагмента: <strong>NH₂</strong>, <strong>CH</strong>, <strong>CH₃</strong>, <strong>COOH</strong>.<br>
-        • Все фрагменты должны <strong>соседствовать друг с другом</strong> (по вертикали или горизонтали), образуя одну связную группу.<br>
-        • Лишние фрагменты (OH, CHO, SH, бензол) использовать нельзя.<br>
-        • Порядок соединения и геометрия (линия, угол, ответвление) могут быть любыми — главное, чтобы все четыре части были рядом.
+
+    <div class="molecule-selector">
+        <label>Вещество:</label>
+        <select id="moleculeSelect">
+            <option value="alanine">Аланин (NH₂–CH(CH₃)–COOH)</option>
+            <option value="glycine">Глицин (NH₂–CH₂–COOH)</option>
+        </select>
+        <span id="moleculeHint" style="color:#667eea; font-size:14px;"></span>
+    </div>
+
+    <div class="game-description" id="gameDescription">
+        <!-- описание будет меняться в зависимости от выбранного вещества -->
     </div>
 
     <div class="construct-palette" id="palette">
-        <div class="group-piece" draggable="true" data-fragment="NH₂">NH₂</div>
-        <div class="group-piece" draggable="true" data-fragment="CH">CH</div>
-        <div class="group-piece" draggable="true" data-fragment="CH₃">CH₃</div>
-        <div class="group-piece" draggable="true" data-fragment="COOH">COOH</div>
-        <div class="group-piece" draggable="true" data-fragment="OH">OH</div>
-        <div class="group-piece" draggable="true" data-fragment="CHO">CHO</div>
-        <div class="group-piece" draggable="true" data-fragment="SH">SH</div>
-        <div class="group-piece" draggable="true" data-fragment="C₆H₅">C₆H₅ (бензол)</div>
+        <!-- палитра будет заполнена динамически -->
     </div>
 
     <div class="game-grid" id="gameGrid"></div>
@@ -182,12 +181,73 @@
 </div>
 
 <script>
+    // ========== КОНФИГУРАЦИЯ ВЕЩЕСТВ ==========
+    const MOLECULES = {
+        alanine: {
+            name: "Аланин",
+            formula: "NH₂–CH(CH₃)–COOH",
+            requiredFragments: { "NH₂": 1, "CH": 1, "CH₃": 1, "COOH": 1 },
+            allowedFragments: ["NH₂", "CH", "CH₃", "COOH"],
+            bonds: {
+                // Какие связи разрешены (двунаправленные)
+                "NH₂": ["CH"],
+                "CH": ["NH₂", "COOH", "CH₃"],
+                "COOH": ["CH"],
+                "CH₃": ["CH"]
+            },
+            description: "Центральный атом (CH) связан с NH₂, COOH и CH₃. Метильная группа может быть в любом месте, но только прикреплена к CH."
+        },
+        glycine: {
+            name: "Глицин",
+            formula: "NH₂–CH₂–COOH",
+            requiredFragments: { "NH₂": 1, "CH₂": 1, "COOH": 1 },
+            allowedFragments: ["NH₂", "CH₂", "COOH"],
+            bonds: {
+                "NH₂": ["CH₂"],
+                "CH₂": ["NH₂", "COOH"],
+                "COOH": ["CH₂"]
+            },
+            description: "Цепочка из трёх фрагментов: NH₂–CH₂–COOH, они должны быть соединены последовательно."
+        }
+    };
+
+    let currentMolecule = "alanine"; // текущее выбранное вещество
+    let config = MOLECULES[currentMolecule];
+
     const GRID_SIZE = 5;
     let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
-    
-    // Только эти четыре фрагмента считаются правильными.
-    const allowedFragments = ["NH₂", "CH", "CH₃", "COOH"];
-    
+
+    // Обновление палитры и описания в зависимости от выбранного вещества
+    function updateUI() {
+        config = MOLECULES[currentMolecule];
+        // Обновляем описание
+        document.getElementById('gameDescription').innerHTML = `
+            <strong>Задание:</strong> Соберите формулу <strong>${config.name}</strong> — <code>${config.formula}</code>.<br>
+            Перетащите фрагменты из палитры на поле 5x5.<br><br>
+            ✅ <strong>Правила:</strong><br>
+            • Используйте только фрагменты: ${config.allowedFragments.join(', ')} (каждый по одному разу).<br>
+            • Все фрагменты должны быть соединены по правильным химическим связям (например, для аланина центральный CH связан с NH₂, COOH и CH₃).<br>
+            • Все части должны образовывать одну связную группу (без разрывов).<br>
+            • ${config.description}
+        `;
+        // Обновляем палитру: показываем все возможные фрагменты (включая лишние, но они будут отвергнуты)
+        const paletteDiv = document.getElementById('palette');
+        const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
+        // Отфильтруем, чтобы не дублировать, но для выбранного вещества полезно показать и лишние (они будут вызывать ошибку)
+        paletteDiv.innerHTML = '';
+        allFragments.forEach(frag => {
+            const piece = document.createElement('div');
+            piece.className = 'group-piece';
+            piece.setAttribute('draggable', 'true');
+            piece.setAttribute('data-fragment', frag);
+            piece.textContent = frag === 'C₆H₅' ? 'C₆H₅ (бензол)' : frag;
+            paletteDiv.appendChild(piece);
+        });
+        initDragFromPalette();
+        resetGame();
+    }
+
+    // Рендер сетки
     function renderGrid() {
         const gridContainer = document.getElementById('gameGrid');
         gridContainer.innerHTML = '';
@@ -219,7 +279,6 @@
                         const col = parseInt(cell.getAttribute('data-col'));
                         gridData[row][col] = fragment;
                         renderGrid();
-                        // Очистить сообщение, если пользователь что-то меняет
                         document.getElementById('message').innerHTML = '';
                         document.getElementById('message').className = 'message';
                     }
@@ -228,7 +287,7 @@
             }
         }
     }
-    
+
     function initDragFromPalette() {
         const pieces = document.querySelectorAll('#palette .group-piece');
         pieces.forEach(piece => {
@@ -242,31 +301,28 @@
             });
         });
     }
-    
+
     function resetGame() {
         gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
         renderGrid();
         document.getElementById('message').innerHTML = '';
         document.getElementById('message').className = 'message';
     }
-    
-    // Проверка, что все занятые клетки образуют одну связную группу (4 соседствующие)
+    // Проверка связности (BFS)
     function isConnected(positions) {
         if (positions.length === 0) return true;
-        // Создаём Set для быстрого доступа к координатам
         const posSet = new Set(positions.map(p => `${p.row},${p.col}`));
-        // BFS/DFS для проверки связности
         const start = positions[0];
         const queue = [start];
         const visited = new Set();
         visited.add(`${start.row},${start.col}`);
-        const directions = [[-1,0],[1,0],[0,-1],[0,1]];
+        const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
         while (queue.length) {
             const {row, col} = queue.shift();
-            for (let [dr, dc] of directions) {
+            for (let [dr, dc] of dirs) {
                 const nr = row + dr;
                 const nc = col + dc;
-                const key =`${nr},${nc}`;
+                const key = `${nr},${nc}`;
                 if (posSet.has(key) && !visited.has(key)) {
                     visited.add(key);
                     queue.push({row: nr, col: nc});
@@ -275,60 +331,126 @@
         }
         return visited.size === positions.length;
     }
-    
+
+    // Проверка правильности связей по графу
+    function checkBonds(occupied, fragmentMap) {
+        // occupied: массив объектов {row, col, frag}
+        // fragmentMap: Map от координаты к фрагменту
+        // Собираем все рёбра (связи) между соседними фрагментами
+        const edges = [];
+        const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+        for (let i = 0; i < occupied.length; i++) {
+            const a = occupied[i];
+            for (let j = i+1; j < occupied.length; j++) {
+                const b = occupied[j];
+                const dist = Math.abs(a.row - b.row) + Math.abs(a.col - b.col);
+                if (dist === 1) {
+                    // связь между a.frag и b.frag
+                    edges.push([a.frag, b.frag]);
+                }
+            }
+        }
+        // Проверяем каждую связь по правилам
+        const bondsConfig = config.bonds;
+        for (let [f1, f2] of edges) {
+            // связь должна быть разрешена в конфигурации (в обе стороны)
+            const ok = (bondsConfig[f1] && bondsConfig[f1].includes(f2)) ||
+                       (bondsConfig[f2] && bondsConfig[f2].includes(f1));
+            if (!ok) return false;
+        }
+        // Также нужно проверить, что количество связей для каждого фрагмента соответствует ожидаемому
+        // (например, CH должен иметь 3 связи, NH₂ — 1 и т.д.) – это можно вывести из bondsConfig,
+        // но для простоты проверим, что степени вершин соответствуют ожидаемым из bondsConfig (не лишние связи)
+        // Подсчитаем степени
+        const degree = {};
+        for (let [f1, f2] of edges) {
+            degree[f1] = (degree[f1] || 0) + 1;
+            degree[f2] = (degree[f2] || 0) + 1;
+        }
+        // Ожидаемые степени: для аланина: CH:3, остальные:1; для глицина: CH₂:2, NH₂:1, COOH:1
+        // Вычислим из bondsConfig (идеально, но можно прописать явно)
+        // Здесь упростим: проверим, что нет изолированных фрагментов (все должны быть связаны) – уже проверено связностью.
+        // Дополнительно: в аланине CH имел степень 3, если степень меньше – ошибка.
+        const expectedDegrees = {};
+        if (currentMolecule === 'alanine') {
+            expectedDegrees['CH'] = 3;
+            expectedDegrees['NH₂'] = 1;
+            expectedDegrees['COOH'] = 1;
+            expectedDegrees['CH₃'] = 1;
+        } else if (currentMolecule === 'glycine') {
+            expectedDegrees['CH₂'] = 2;
+            expectedDegrees['NH₂'] = 1;
+            expectedDegrees['COOH'] = 1;
+        }
+        for (let frag in expectedDegrees) {
+            if ((degree[frag] || 0) !== expectedDegrees[frag]) return false;
+        }
+        return true;
+    }
+
     function checkFormula() {
-        // Собираем все занятые клетки и считаем количество фрагментов
+        // Собираем занятые клетки
         let occupied = [];
         let fragmentCount = {};
         for (let i = 0; i < GRID_SIZE; i++) {
             for (let j = 0; j < GRID_SIZE; j++) {
                 const val = gridData[i][j];
                 if (val !== null) {
-                    occupied.push({row: i, col: j});
+                    occupied.push({row: i, col: j, frag: val});
                     fragmentCount[val] = (fragmentCount[val] || 0) + 1;
                 }
             }
         }
-        
-        // 1) Должно быть занято ровно 4 клетки (ровно 4 фрагмента)
-        if (occupied.length !== 4) {
-            document.getElementById('message').innerHTML = '❌ Неправильно: должно быть ровно 4 фрагмента (NH₂, CH, CH₃, COOH).';
+        const totalCells = occupied.length;
+        const requiredCount = Object.keys(config.requiredFragments).length;
+        if (totalCells !== requiredCount) {
+            document.getElementById('message').innerHTML = `❌ Неправильно: нужно ровно ${requiredCount} фрагментов (${config.allowedFragments.join(', ')}).`;
             document.getElementById('message').className = 'message error';
             return;
         }
-        
-        // 2) Все фрагменты должны входить в разрешённый список (NH₂, CH, CH₃, COOH) и не повторяться
-        let allowed = true;
+
+        // Проверка, что все фрагменты – из разрешённых и каждый ровно один
         for (let frag in fragmentCount) {
-            if (!allowedFragments.includes(frag)) {
-                allowed = false;
-                break;
+            if (!config.allowedFragments.includes(frag)) {
+                document.getElementById('message').innerHTML = `❌ Неправильно: фрагмент "${frag}" не входит в состав ${config.name}. Используйте только ${config.allowedFragments.join(', ')}.`;
+                document.getElementById('message').className = 'message error';
+                return;
             }
-            if (fragmentCount[frag] !== 1) {
-                allowed = false;
-                break;
+            if (fragmentCount[frag] !== config.requiredFragments[frag]) {
+                document.getElementById('message').innerHTML = `❌ Неправильно: каждого фрагмента должно быть ровно по одному.`;
+                document.getElementById('message').className = 'message error';
+                return;
             }
         }
-        if (!allowed) {
-            document.getElementById('message').innerHTML = '❌ Неправильно: используйте только NH₂, CH, CH₃, COOH, каждый по одному разу.';
+
+        // Проверка связности
+        const positions = occupied.map(p => ({row: p.row, col: p.col}));
+        if (!isConnected(positions)) {
+            document.getElementById('message').innerHTML = '❌ Неправильно: все фрагменты должны быть соединены в одну группу (без разрывов).';
             document.getElementById('message').className = 'message error';
             return;
         }
-        
-        // 3) Проверка связности (все четыре клетки должны быть соседними)
-        if (!isConnected(occupied)) {
-            document.getElementById('message').innerHTML = '❌ Неправильно: все части формулы должны стоять рядом (образовывать связную группу). Не оставляйте разрывов.';
+
+        // Проверка правильности химических связей
+        if (!checkBonds(occupied, new Map(occupied.map(p => [`${p.row},${p.col}`, p.frag])))) {
+            document.getElementById('message').innerHTML = `❌ Неправильно: связи между фрагментами не соответствуют структуре ${config.name}. Проверьте, что фрагменты соединены правильно (например, центральный атом CH должен быть связан с NH₂, COOH и CH₃).`;
             document.getElementById('message').className = 'message error';
             return;
         }
-        
+
         // Всё правильно
-        document.getElementById('message').innerHTML = '✅ Правильно! Вы собрали формулу аланина. Метильная группа (CH₃) может быть в любом месте, лишь бы все части были рядом.';
+        document.getElementById('message').innerHTML = `✅ Правильно! Вы собрали формулу ${config.name}. Отличная работа!`;
         document.getElementById('message').className = 'message success';
     }
-    
-    renderGrid();
-    initDragFromPalette();
+
+    // Обработка выбора вещества
+    document.getElementById('moleculeSelect').addEventListener('change', (e) => {
+        currentMolecule = e.target.value;
+        updateUI();
+    });
+
+    // Инициализация
+    updateUI();
     document.getElementById('checkBtn').addEventListener('click', checkFormula);
     document.getElementById('resetBtn').addEventListener('click', resetGame);
 </script>
