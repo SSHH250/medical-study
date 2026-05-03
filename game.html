@@ -71,23 +71,12 @@
             border-radius: 30px;
             font-weight: bold;
         }
-        .next-btn {
-            background: #48bb78;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-        }
-        .next-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
         .game-description {
             margin-bottom: 20px;
             padding: 15px;
             background: #f0f4ff;
             border-radius: 15px;
+            word-break: break-word;
         }
         .construct-palette {
             display: flex;
@@ -111,6 +100,7 @@
             user-select: none;
             transition: 0.2s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
         .group-piece:active { cursor: grabbing; }
         .group-piece.dragging { opacity: 0.5; }
@@ -138,6 +128,8 @@
             transition: 0.2s;
             text-align: center;
             padding: 5px;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         .grid-cell.drag-over {
             background: #ffedd5;
@@ -197,8 +189,9 @@
         }
         @media (max-width: 700px) {
             .game-grid { gap: 6px; padding: 12px; }
-            .grid-cell { font-size: 12px; }
-            .group-piece { font-size: 14px; padding: 6px 12px; }
+            .grid-cell { font-size: 12px; padding: 3px; }
+            .group-piece { font-size: 14px; padding: 6px 12px; white-space: normal; text-align: center; }
+            .construct-palette { gap: 8px; }
         }
     </style>
 </head>
@@ -222,7 +215,6 @@
     <div id="gameStatus" class="game-status" style="display: none;">
         <span>Задание <span id="currentTaskIdx">1</span> из <span id="totalTasks">3</span></span>
         <span class="score-box">⭐ Счёт: <span id="scoreCount">0</span></span>
-        <button id="nextTaskBtn" class="next-btn" disabled>Следующее вещество →</button>
     </div>
 
     <!-- Выбор вещества (только в тренировочном режиме) -->
@@ -240,13 +232,13 @@
 
     <div class="construct-palette" id="palette"></div>
     <div class="game-grid" id="gameGrid"></div>
+
     <div class="controls">
         <button id="checkBtn" class="check-btn">✅ Проверить</button>
         <button id="resetBtn" class="reset-btn">🔄 Очистить поле</button>
     </div>
     <div id="message" class="message"></div>
 </div>
-
 <script>
     // ========== КОНФИГУРАЦИЯ ВЕЩЕСТВ ==========
     const MOLECULES = {
@@ -286,8 +278,8 @@
     let gameTasks = []; // массив ID веществ для игрового режима
     let currentTaskIndex = 0;
     let gameScore = 0;
-    let gameActive = false; // активно ли текущее задание (ожидаем проверки)
-    let nextTaskEnabled = false; // можно ли перейти к следующему (после правильного ответа)
+    let gameActive = true; // активно ли текущее задание
+    let autoTransitionTimer = null;
 
     const GRID_SIZE = 5;
     let gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
@@ -302,10 +294,10 @@
     const currentTaskIdxSpan = document.getElementById('currentTaskIdx');
     const totalTasksSpan = document.getElementById('totalTasks');
     const scoreCountSpan = document.getElementById('scoreCount');
-    const nextTaskBtn = document.getElementById('nextTaskBtn');
 
     // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
     function resetGameField() {
+        if (autoTransitionTimer) clearTimeout(autoTransitionTimer);
         gridData = Array(GRID_SIZE).fill().map(() => Array(GRID_SIZE).fill(null));
         renderGrid();
         document.getElementById('message').innerHTML = '';
@@ -367,7 +359,6 @@
         });
     }
 
-    // Обновление палитры и описания для текущего вещества
     function updateUIForCurrentMolecule() {
         config = MOLECULES[currentMolecule];
         document.getElementById('gameDescription').innerHTML = `
@@ -376,7 +367,6 @@
             Все фрагменты должны быть соединены правильно и образовывать связную группу.<br>
             ${config.description}
         `;
-        // Обновляем палитру: показываем все возможные фрагменты (включая лишние)
         const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
         const paletteDiv = document.getElementById('palette');
         paletteDiv.innerHTML = '';
@@ -419,7 +409,6 @@
     function checkBonds(occupied, fragmentMap, moleculeId) {
         const molConfig = MOLECULES[moleculeId];
         const bondsConfig = molConfig.bonds;
-        // Собираем рёбра между соседями
         const edges = [];
         const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
         for (let i = 0; i < occupied.length; i++) {
@@ -430,15 +419,13 @@
                 if (dist === 1) {
                     edges.push([a.frag, b.frag]);
                 }
-            }
+                }
         }
-        // Проверяем каждую связь
         for (let [f1, f2] of edges) {
             const ok = (bondsConfig[f1] && bondsConfig[f1].includes(f2)) ||
                        (bondsConfig[f2] && bondsConfig[f2].includes(f1));
             if (!ok) return false;
         }
-        // Проверяем степени (только для ключевых фрагментов, необязательно)
         const degree = {};
         for (let [f1, f2] of edges) {
             degree[f1] = (degree[f1] || 0) + 1;
@@ -458,7 +445,6 @@
     }
 
     function checkCurrentFormula() {
-        // Собираем занятые клетки
         let occupied = [];
         let fragmentCount = {};
         for (let i = 0; i < GRID_SIZE; i++) {
@@ -507,7 +493,6 @@
     // ========== ИГРОВОЙ РЕЖИМ ==========
     function initGameMode() {
         const tasksCount = parseInt(tasksCountInput.value) || 3;
-        // Перемешиваем список веществ и берём первых tasksCount
         const shuffled = [...ALL_MOLECULE_IDS];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -517,24 +502,20 @@
         currentTaskIndex = 0;
         gameScore = 0;
         gameActive = true;
-        nextTaskEnabled = false;
         scoreCountSpan.textContent = gameScore;
         totalTasksSpan.textContent = gameTasks.length;
         currentTaskIdxSpan.textContent = currentTaskIndex + 1;
-        nextTaskBtn.disabled = true;
         loadTask(gameTasks[currentTaskIndex]);
     }
 
     function loadTask(moleculeId) {
+        if (autoTransitionTimer) clearTimeout(autoTransitionTimer);
         currentMolecule = moleculeId;
         config = MOLECULES[currentMolecule];
-        // Обновляем описание (без выбора вещества)
+        // В игровом режиме показываем только название вещества
         document.getElementById('gameDescription').innerHTML = `
-            <strong>Задание:</strong> Соберите формулу <strong>${config.name}</strong> — <code>${config.formula}</code>.<br>
-            Используйте только фрагменты: ${config.allowedFragments.join(', ')} (каждый по одному разу).<br>
-            Все фрагменты должны быть соединены правильно и образовывать связную группу.
+            <strong>Задание:</strong> Соберите формулу вещества <strong>${config.name}</strong> (${config.formula}).
         `;
-        // Обновляем палитру
         const allFragments = ["NH₂", "CH", "CH₃", "COOH", "OH", "CHO", "SH", "C₆H₅", "CH₂"];
         const paletteDiv = document.getElementById('palette');
         paletteDiv.innerHTML = '';
@@ -548,39 +529,44 @@
         });
         initDragFromPalette();
         resetGameField();
-        nextTaskBtn.disabled = true;
         gameActive = true;
     }
 
-    function onGameCorrect() {
-        gameScore++;
-        scoreCountSpan.textContent = gameScore;
-        nextTaskBtn.disabled = false;
-        showMessage(`✅ Правильно! +1 балл. Нажмите "Следующее вещество".`, true);
-        gameActive = false;
-    }
-
-    function nextTask() {
-        if (currentTaskIndex + 1 < gameTasks.length) {
-            currentTaskIndex++;
-            currentTaskIdxSpan.textContent = currentTaskIndex + 1;
-            loadTask(gameTasks[currentTaskIndex]);
+    function onGameCheck() {
+        if (!gameActive) return;
+        const isCorrect = checkCurrentFormula();
+        if (isCorrect) {
+            gameScore++;
+            scoreCountSpan.textContent = gameScore;
+            showMessage(`✅ Правильно! +1 балл. Переход к следующему...`, true);
         } else {
-            // Игра окончена
-            gameStatusDiv.style.display = 'none';
-            currentMode = 'train';
-            trainModeBtn.classList.add('active');
-            gameModeBtn.classList.remove('active');
-            moleculeSelectorDiv.style.display = 'flex';
-            document.getElementById('gameDescription').innerHTML =` <strong>🎉 Игра завершена! Ваш результат: ${gameScore} из ${gameTasks.length}.</strong><br>Выберите режим тренировки или начните новую игру.`;
-            showMessage(`🏆 Игра окончена! Вы набрали ${gameScore} / ${gameTasks.length}.`, true);
-            // Сброс поля и очистка
-            resetGameField();
+            showMessage(`❌ Неправильно. Переход к следующему...`, false);
         }
+        gameActive = false;
+        // Автоматический переход через 1.5 секунды
+        if (autoTransitionTimer) clearTimeout(autoTransitionTimer);
+        autoTransitionTimer = setTimeout(() => {
+            if (currentTaskIndex + 1 < gameTasks.length) {
+                currentTaskIndex++;
+                currentTaskIdxSpan.textContent = currentTaskIndex + 1;
+                loadTask(gameTasks[currentTaskIndex]);
+            } else {
+                // Игра окончена
+                gameStatusDiv.style.display = 'none';
+                currentMode = 'train';
+                trainModeBtn.classList.add('active');
+                gameModeBtn.classList.remove('active');
+                moleculeSelectorDiv.style.display = 'flex';
+                document.getElementById('gameDescription').innerHTML = `<strong>🎉 Игра завершена! Ваш результат: ${gameScore} из ${gameTasks.length}.</strong><br>Выберите режим тренировки или начните новую игру.`;
+                showMessage(`🏆 Игра окончена! Вы набрали ${gameScore} / ${gameTasks.length}.`, true);
+                resetGameField();
+            }
+        }, 1500);
     }
 
     // ========== ОБРАБОТЧИКИ ==========
     function switchMode(mode) {
+        if (autoTransitionTimer) clearTimeout(autoTransitionTimer);
         currentMode = mode;
         if (mode === 'train') {
             gameStatusDiv.style.display = 'none';
@@ -598,28 +584,17 @@
             initGameMode();
         }
     }
-    // Кнопка проверки
+
     document.getElementById('checkBtn').addEventListener('click', () => {
         if (currentMode === 'train') {
             checkCurrentFormula();
         } else if (currentMode === 'game' && gameActive) {
-            const correct = checkCurrentFormula();
-            if (correct) {
-                onGameCorrect();
-            } else {
-                // остаёмся на том же задании
-            }
+            onGameCheck();
         }
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
         resetGameField();
-    });
-
-    nextTaskBtn.addEventListener('click', () => {
-        if (currentMode === 'game' && !nextTaskBtn.disabled) {
-            nextTask();
-        }
     });
 
     trainModeBtn.addEventListener('click', () => switchMode('train'));
@@ -631,8 +606,7 @@
             updateUIForCurrentMolecule();
         }
     });
-
-    // Инициализация (тренировочный режим по умолчанию)
+    // Инициализация
     updateUIForCurrentMolecule();
 </script>
 </body>
